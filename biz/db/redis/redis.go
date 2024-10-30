@@ -19,5 +19,8 @@ func Init() {
 }
 
 func GetRedisClient() *redis.Client {
+	if rdbClient == nil {
+		panic("redis client is nil")
+	}
 	return rdbClient
 }
