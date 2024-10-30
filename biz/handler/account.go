@@ -84,11 +84,10 @@ func Login(ctx context.Context, c *app.RequestContext) {
 //	@Description	用户信息查询接口
 //	@Accept			json
 //	@Produce		json
-//	@Param			X-CSRF-TOKEN	header		string			true	"csrf token"
-//	@Param			cookie	header		string	true	"cookie"
-//	@Success		200		{object}	dto.CommonResp{data=dto.AccountInfoQueryResp}
-//	@Header			200		{string}	set-cookie	"cookie"
-//	@Failure		400,500	{object}	dto.CommonResp
+//	@Param			X-CSRF-TOKEN	header		string	true	"csrf token"
+//	@Success		200				{object}	dto.CommonResp{data=dto.AccountInfoQueryResp}
+//	@Header			200				{string}	set-cookie	"cookie"
+//	@Failure		400,500			{object}	dto.CommonResp
 //	@Router			/api/v1/account/info [GET]
 func GetAccountInfo(ctx context.Context, c *app.RequestContext) {
 	accountId := ctx.Value(consts.SessionKeyAccountId).(string)
@@ -121,7 +120,6 @@ func GetAccountInfo(ctx context.Context, c *app.RequestContext) {
 //	@Produce		json
 //	@Param			req				body		dto.LogoutReq	true	"logout request body"
 //	@Param			X-CSRF-TOKEN	header		string			true	"csrf token"
-//	@Param			cookie			header		string			true	"cookie"
 //	@Success		200				{object}	dto.CommonResp{data=dto.LogoutResp}
 //	@Header			200				{string}	set-cookie	"cookie"
 //	@Failure		400,500			{object}	dto.CommonResp
@@ -156,7 +154,6 @@ func Logout(ctx context.Context, c *app.RequestContext) {
 //	@Produce		json
 //	@Param			req				body		dto.PasswordUpdateReq	true	"password update request body"
 //	@Param			X-CSRF-TOKEN	header		string					true	"csrf token"
-//	@Param			cookie			header		string					true	"cookie"
 //	@Success		200				{object}	dto.CommonResp{data=dto.PasswordUpdateResp}
 //	@Header			200				{string}	set-cookie	"cookie"
 //	@Failure		400,500			{object}	dto.CommonResp
@@ -205,7 +202,6 @@ func ForgetPassword(ctx context.Context, c *app.RequestContext) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			req		body		dto.ResetPasswordReq	true	"password reset request body"
-//	@Param			cookie	header		string					true	"cookie"
 //	@Success		200		{object}	dto.CommonResp{data=dto.ResetPasswordResp}
 //	@Header			200		{string}	set-cookie	"cookie"
 //	@Failure		400,500	{object}	dto.CommonResp
@@ -264,7 +260,6 @@ func Register(ctx context.Context, c *app.RequestContext) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			req		body		dto.RegisterVerifyReq	true	"register request body"
-//	@Param			cookie	header		string					true	"cookie"
 //	@Success		200		{object}	dto.CommonResp{data=dto.RegisterVerifyResp}
 //	@Failure		400,500	{object}	dto.CommonResp
 //	@Router			/api/v1/account/register_verify [POST]

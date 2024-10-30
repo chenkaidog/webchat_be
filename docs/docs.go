@@ -106,13 +106,6 @@ const docTemplate = `{
                         "name": "X-CSRF-TOKEN",
                         "in": "header",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "cookie",
-                        "name": "cookie",
-                        "in": "header",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -252,13 +245,6 @@ const docTemplate = `{
                         "name": "X-CSRF-TOKEN",
                         "in": "header",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "cookie",
-                        "name": "cookie",
-                        "in": "header",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -319,13 +305,6 @@ const docTemplate = `{
                         "type": "string",
                         "description": "csrf token",
                         "name": "X-CSRF-TOKEN",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "cookie",
-                        "name": "cookie",
                         "in": "header",
                         "required": true
                     }
@@ -456,13 +435,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/dto.RegisterVerifyReq"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "cookie",
-                        "name": "cookie",
-                        "in": "header",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -521,13 +493,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/dto.ResetPasswordReq"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "cookie",
-                        "name": "cookie",
-                        "in": "header",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -597,13 +562,6 @@ const docTemplate = `{
                         "type": "string",
                         "description": "csrf token",
                         "name": "X-CSRF-TOKEN",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "cookie",
-                        "name": "cookie",
                         "in": "header",
                         "required": true
                     }

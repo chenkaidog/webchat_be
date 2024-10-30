@@ -102,13 +102,6 @@
                         "name": "X-CSRF-TOKEN",
                         "in": "header",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "cookie",
-                        "name": "cookie",
-                        "in": "header",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -248,13 +241,6 @@
                         "name": "X-CSRF-TOKEN",
                         "in": "header",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "cookie",
-                        "name": "cookie",
-                        "in": "header",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -315,13 +301,6 @@
                         "type": "string",
                         "description": "csrf token",
                         "name": "X-CSRF-TOKEN",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "cookie",
-                        "name": "cookie",
                         "in": "header",
                         "required": true
                     }
@@ -452,13 +431,6 @@
                         "schema": {
                             "$ref": "#/definitions/dto.RegisterVerifyReq"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "cookie",
-                        "name": "cookie",
-                        "in": "header",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -517,13 +489,6 @@
                         "schema": {
                             "$ref": "#/definitions/dto.ResetPasswordReq"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "cookie",
-                        "name": "cookie",
-                        "in": "header",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -593,13 +558,6 @@
                         "type": "string",
                         "description": "csrf token",
                         "name": "X-CSRF-TOKEN",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "cookie",
-                        "name": "cookie",
                         "in": "header",
                         "required": true
                     }

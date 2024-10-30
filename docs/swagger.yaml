@@ -194,11 +194,6 @@ paths:
         name: X-CSRF-TOKEN
         required: true
         type: string
-      - description: cookie
-        in: header
-        name: cookie
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -285,11 +280,6 @@ paths:
         name: X-CSRF-TOKEN
         required: true
         type: string
-      - description: cookie
-        in: header
-        name: cookie
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -326,11 +316,6 @@ paths:
       - description: csrf token
         in: header
         name: X-CSRF-TOKEN
-        required: true
-        type: string
-      - description: cookie
-        in: header
-        name: cookie
         required: true
         type: string
       produces:
@@ -411,11 +396,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.RegisterVerifyReq'
-      - description: cookie
-        in: header
-        name: cookie
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -451,11 +431,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.ResetPasswordReq'
-      - description: cookie
-        in: header
-        name: cookie
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -498,11 +473,6 @@ paths:
       - description: csrf token
         in: header
         name: X-CSRF-TOKEN
-        required: true
-        type: string
-      - description: cookie
-        in: header
-        name: cookie
         required: true
         type: string
       produces:

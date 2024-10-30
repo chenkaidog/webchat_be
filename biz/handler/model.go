@@ -17,7 +17,6 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Param			X-CSRF-TOKEN	header		string	true	"csrf token"
-//	@Param			cookie			header		string	true	"cookie"
 //	@Success		200				{object}	dto.CommonResp{data=dto.ModelQueryResp}
 //	@Header			200				{string}	set-cookie	"cookie"
 //	@Failure		400,500			{object}	dto.CommonResp
