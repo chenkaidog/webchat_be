@@ -10,7 +10,6 @@ import (
 	"github.com/hertz-contrib/cors"
 	"github.com/hertz-contrib/logger/accesslog"
 	"github.com/hertz-contrib/swagger"
-	_ "github.com/hertz-contrib/swagger/example/basic/docs"
 	swaggerFiles "github.com/swaggo/files"
 	"webchat_be/biz/config"
 	"webchat_be/biz/db"
@@ -39,7 +38,7 @@ func main() {
 	vd := go_playground.NewValidator()
 
 	h := server.Default(
-		server.WithHostPorts("0.0.0.0:8000"),
+		server.WithHostPorts("0.0.0.0:8080"),
 		server.WithCustomValidator(vd),
 	)
 
@@ -47,7 +46,7 @@ func main() {
 	register(h)
 
 	// swagger document
-	url := swagger.URL("/swagger/doc.json")
+	url := swagger.URL("/swagger/swagger.json.json")
 	h.GET("/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler, url))
 
 	h.Spin()
