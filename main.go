@@ -46,7 +46,7 @@ func main() {
 	register(h)
 
 	// swagger document
-	url := swagger.URL("/swagger/swagger.json.json")
+	url := swagger.URL("/swagger/swagger.json")
 	h.GET("/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler, url))
 
 	h.Spin()
