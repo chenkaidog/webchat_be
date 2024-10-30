@@ -15,6 +15,7 @@ import (
 	"webchat_be/biz/db"
 	"webchat_be/biz/middleware"
 	"webchat_be/biz/util/logger"
+	_ "webchat_be/docs"
 )
 
 //	@title			HertzTest
