@@ -16,6 +16,7 @@ import (
 
 // Login 用户登录接口
 //
+//	@Tags			account
 //	@Summary		用户登录接口
 //	@Description	用户登录接口
 //	@Accept			json
@@ -77,6 +78,7 @@ func Login(ctx context.Context, c *app.RequestContext) {
 
 // GetAccountInfo 用户信息查询接口
 //
+//	@Tags			account
 //	@Summary		用户信息查询接口
 //	@Description	用户信息查询接口
 //	@Accept			json
@@ -110,6 +112,7 @@ func GetAccountInfo(ctx context.Context, c *app.RequestContext) {
 
 // Logout 用户登出接口
 //
+//	@Tags			account
 //	@Summary		用户登出接口
 //	@Description	用户登出接口
 //	@Accept			json
@@ -144,6 +147,7 @@ func Logout(ctx context.Context, c *app.RequestContext) {
 
 // UpdatePassword 用户修改密码接口
 //
+//	@Tags			account
 //	@Summary		用户修改密码接口
 //	@Description	用户修改密码接口
 //	@Accept			json
@@ -169,6 +173,7 @@ func UpdatePassword(ctx context.Context, c *app.RequestContext) {
 
 // ForgetPassword 用户忘记密码接口
 //
+//	@Tags			account
 //	@Summary		用户忘记密码接口
 //	@Description	用户忘记密码接口，请求获取验证码进行重置
 //	@Accept			json
@@ -192,6 +197,7 @@ func ForgetPassword(ctx context.Context, c *app.RequestContext) {
 
 // ResetPassword 用户重置密码接口
 //
+//	@Tags			account
 //	@Summary		用户修改密码接口
 //	@Description	用户修改密码接口
 //	@Accept			json
@@ -216,6 +222,7 @@ func ResetPassword(ctx context.Context, c *app.RequestContext) {
 
 // Register 用户注册接口
 //
+//	@Tags			account
 //	@Summary		用户注册接口
 //	@Description	用户注册接口，请求后获取验证码，然后才能创建
 //	@Accept			json
@@ -239,11 +246,11 @@ func Register(ctx context.Context, c *app.RequestContext) {
 
 // RegisterVerify 用户注册验证接口
 //
+//	@Tags			account
 //	@Summary		用户注册验证接口
 //	@Description	用户注册验证接口
 //	@Accept			json
 //	@Produce		json
-//
 //	@Param			req		body		dto.RegisterVerifyReq	true	"register request body"
 //	@Param			cookie	header		string					true	"cookie"
 //	@Success		200		{object}	dto.CommonResp{data=dto.RegisterVerifyResp}

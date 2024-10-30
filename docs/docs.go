@@ -22,19 +22,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1//ping": {
-            "get": {
-                "description": "测试 Description",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "测试 Summary",
-                "responses": {}
-            }
-        },
         "/api/v1/account/forget_password": {
             "post": {
                 "description": "用户忘记密码接口，请求获取验证码进行重置",
@@ -43,6 +30,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "account"
                 ],
                 "summary": "用户忘记密码接口",
                 "parameters": [
@@ -105,6 +95,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "account"
+                ],
                 "summary": "用户信息查询接口",
                 "parameters": [
                     {
@@ -163,6 +156,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "account"
                 ],
                 "summary": "用户登录接口",
                 "parameters": [
@@ -228,6 +224,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "account"
                 ],
                 "summary": "用户登出接口",
                 "parameters": [
@@ -304,6 +303,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "model"
+                ],
                 "summary": "获取模型列表",
                 "parameters": [
                     {
@@ -370,6 +372,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "account"
+                ],
                 "summary": "用户注册接口",
                 "parameters": [
                     {
@@ -430,6 +435,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "account"
                 ],
                 "summary": "用户注册验证接口",
                 "parameters": [
@@ -492,6 +500,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "account"
                 ],
                 "summary": "用户修改密码接口",
                 "parameters": [
@@ -561,6 +572,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "account"
+                ],
                 "summary": "用户修改密码接口",
                 "parameters": [
                     {
@@ -625,6 +639,19 @@ const docTemplate = `{
                         }
                     }
                 }
+            }
+        },
+        "/api/v1/ping": {
+            "get": {
+                "description": "测试 Description",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "测试 Summary",
+                "responses": {}
             }
         }
     },
@@ -830,7 +857,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8888",
+	Host:             "",
 	BasePath:         "/",
 	Schemes:          []string{"http"},
 	Title:            "HertzTest",

@@ -133,7 +133,6 @@ definitions:
     type: object
   dto.ResetPasswordResp:
     type: object
-host: localhost:8888
 info:
   contact:
     name: hertz-contrib
@@ -145,15 +144,6 @@ info:
   title: HertzTest
   version: "1.0"
 paths:
-  /api/v1//ping:
-    get:
-      consumes:
-      - application/json
-      description: 测试 Description
-      produces:
-      - application/json
-      responses: {}
-      summary: 测试 Summary
   /api/v1/account/forget_password:
     post:
       consumes:
@@ -191,6 +181,8 @@ paths:
           schema:
             $ref: '#/definitions/dto.CommonResp'
       summary: 用户忘记密码接口
+      tags:
+      - account
   /api/v1/account/info:
     get:
       consumes:
@@ -227,6 +219,8 @@ paths:
           schema:
             $ref: '#/definitions/dto.CommonResp'
       summary: 用户信息查询接口
+      tags:
+      - account
   /api/v1/account/login:
     post:
       consumes:
@@ -267,6 +261,8 @@ paths:
           schema:
             $ref: '#/definitions/dto.CommonResp'
       summary: 用户登录接口
+      tags:
+      - account
   /api/v1/account/logout:
     post:
       consumes:
@@ -314,6 +310,8 @@ paths:
           schema:
             $ref: '#/definitions/dto.CommonResp'
       summary: 用户登出接口
+      tags:
+      - account
   /api/v1/account/models:
     get:
       consumes:
@@ -355,6 +353,8 @@ paths:
           schema:
             $ref: '#/definitions/dto.CommonResp'
       summary: 获取模型列表
+      tags:
+      - model
   /api/v1/account/register:
     post:
       consumes:
@@ -392,6 +392,8 @@ paths:
           schema:
             $ref: '#/definitions/dto.CommonResp'
       summary: 用户注册接口
+      tags:
+      - account
   /api/v1/account/register_verify:
     post:
       consumes:
@@ -430,6 +432,8 @@ paths:
           schema:
             $ref: '#/definitions/dto.CommonResp'
       summary: 用户注册验证接口
+      tags:
+      - account
   /api/v1/account/reset_password:
     post:
       consumes:
@@ -472,6 +476,8 @@ paths:
           schema:
             $ref: '#/definitions/dto.CommonResp'
       summary: 用户修改密码接口
+      tags:
+      - account
   /api/v1/account/update_password:
     post:
       consumes:
@@ -519,6 +525,17 @@ paths:
           schema:
             $ref: '#/definitions/dto.CommonResp'
       summary: 用户修改密码接口
+      tags:
+      - account
+  /api/v1/ping:
+    get:
+      consumes:
+      - application/json
+      description: 测试 Description
+      produces:
+      - application/json
+      responses: {}
+      summary: 测试 Summary
 schemes:
 - http
 swagger: "2.0"

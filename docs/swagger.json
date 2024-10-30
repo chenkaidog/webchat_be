@@ -16,22 +16,8 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8888",
     "basePath": "/",
     "paths": {
-        "/api/v1//ping": {
-            "get": {
-                "description": "测试 Description",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "测试 Summary",
-                "responses": {}
-            }
-        },
         "/api/v1/account/forget_password": {
             "post": {
                 "description": "用户忘记密码接口，请求获取验证码进行重置",
@@ -40,6 +26,9 @@
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "account"
                 ],
                 "summary": "用户忘记密码接口",
                 "parameters": [
@@ -102,6 +91,9 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "account"
+                ],
                 "summary": "用户信息查询接口",
                 "parameters": [
                     {
@@ -160,6 +152,9 @@
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "account"
                 ],
                 "summary": "用户登录接口",
                 "parameters": [
@@ -225,6 +220,9 @@
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "account"
                 ],
                 "summary": "用户登出接口",
                 "parameters": [
@@ -301,6 +299,9 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "model"
+                ],
                 "summary": "获取模型列表",
                 "parameters": [
                     {
@@ -367,6 +368,9 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "account"
+                ],
                 "summary": "用户注册接口",
                 "parameters": [
                     {
@@ -427,6 +431,9 @@
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "account"
                 ],
                 "summary": "用户注册验证接口",
                 "parameters": [
@@ -489,6 +496,9 @@
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "account"
                 ],
                 "summary": "用户修改密码接口",
                 "parameters": [
@@ -558,6 +568,9 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "account"
+                ],
                 "summary": "用户修改密码接口",
                 "parameters": [
                     {
@@ -622,6 +635,19 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/v1/ping": {
+            "get": {
+                "description": "测试 Description",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "测试 Summary",
+                "responses": {}
             }
         }
     },

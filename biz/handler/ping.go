@@ -16,7 +16,7 @@ import (
 //	@Description	测试 Description
 //	@Accept			application/json
 //	@Produce		application/json
-//	@Router			/api/v1//ping [GET]
+//	@Router			/api/v1/ping [GET]
 func Ping(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, utils.H{
 		"message": "pong",

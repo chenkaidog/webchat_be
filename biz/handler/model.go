@@ -11,6 +11,7 @@ import (
 
 // GetModels 获取模型列表
 //
+//	@Tags			model
 //	@Summary		获取模型列表
 //	@Description	获取模型列表
 //	@Accept			json
