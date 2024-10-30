@@ -28,9 +28,9 @@ import (
 //	@license.name	Apache 2.0
 //	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 
-//	@host		localhost:8888
-//	@BasePath	/
-//	@schemes	http
+// @host		localhost:8888
+// @BasePath	/
+// @schemes	http
 func main() {
 	logger.Init()
 	config.Init()
@@ -47,7 +47,7 @@ func main() {
 	register(h)
 
 	// swagger document
-	url := swagger.URL("http://localhost:8000/swagger/doc.json")
+	url := swagger.URL("/swagger/doc.json")
 	h.GET("/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler, url))
 
 	h.Spin()
