@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	sessionStorePrefix = "web_chat_session_"
+	sessionStorePrefix = "webchat_session_"
 )
 
 func Session() app.HandlerFunc {

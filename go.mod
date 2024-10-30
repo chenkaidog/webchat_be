@@ -1,6 +1,6 @@
 module webchat_be
 
-go 1.22
+go 1.20
 
 require (
 	github.com/bytedance/gopkg v0.1.1

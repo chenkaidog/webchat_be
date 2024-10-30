@@ -19,6 +19,10 @@ func NewAccountDao(tx ...*gorm.DB) *AccountDao {
 	}
 }
 
+func (dao *AccountDao) Create(ctx context.Context, accountInfo *po.Account) error {
+	return dao.WithContext(ctx).Create(accountInfo).Error
+}
+
 func (dao *AccountDao) QueryByUsername(ctx context.Context, username string) (*po.Account, error) {
 	var result *po.Account
 	if err := dao.WithContext(ctx).

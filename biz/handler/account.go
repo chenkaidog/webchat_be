@@ -9,6 +9,7 @@ import (
 	"webchat_be/biz/model/consts"
 	"webchat_be/biz/model/dto"
 	"webchat_be/biz/model/errs"
+	"webchat_be/biz/model/po"
 	"webchat_be/biz/util/encode"
 	"webchat_be/biz/util/origin"
 	"webchat_be/biz/util/random"
@@ -53,7 +54,6 @@ func Login(ctx context.Context, c *app.RequestContext) {
 
 	csrfToken := random.RandStr(64)
 	csrfSalt := random.RandStr(64)
-	c.Header(consts.HeaderKeyCsrfToken, csrfToken)
 
 	session := sessions.DefaultMany(c, consts.SessionNameAccount)
 	session.Set(consts.SessionKeyCsrfSalt, csrfSalt)
@@ -67,6 +67,7 @@ func Login(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	c.Header(consts.HeaderKeyCsrfToken, csrfToken)
 	dto.SuccessResp(c, &dto.LoginResp{
 		AccountID: accountInfo.AccountID,
 		Username:  accountInfo.Username,
@@ -239,6 +240,16 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		dto.FailResp(c, errs.ParamError)
 		return
 	}
+
+	salt := random.RandStr(16)
+	_ = dao.NewAccountDao().Create(ctx, &po.Account{
+		AccountID: "test_account_id",
+		Email:     registerReq.Email,
+		Username:  registerReq.Username,
+		Password:  encode.EncodePassword(salt, registerReq.Password),
+		Salt:      salt,
+		Status:    "valid",
+	})
 
 	dto.SuccessResp(c, &dto.RegisterResp{})
 	return
