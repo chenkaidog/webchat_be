@@ -46,9 +46,7 @@ func main() {
 	h.Use(middlewareSuite()...)
 	register(h)
 
-	// swagger document
-	url := swagger.URL("/swagger/swagger.json")
-	h.GET("/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler, url))
+	h.GET("/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler))
 
 	h.Spin()
 }
