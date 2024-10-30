@@ -84,6 +84,7 @@ func Login(ctx context.Context, c *app.RequestContext) {
 //	@Description	用户信息查询接口
 //	@Accept			json
 //	@Produce		json
+//	@Param			X-CSRF-TOKEN	header		string			true	"csrf token"
 //	@Param			cookie	header		string	true	"cookie"
 //	@Success		200		{object}	dto.CommonResp{data=dto.AccountInfoQueryResp}
 //	@Header			200		{string}	set-cookie	"cookie"

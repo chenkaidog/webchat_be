@@ -189,6 +189,11 @@ paths:
       - application/json
       description: 用户信息查询接口
       parameters:
+      - description: csrf token
+        in: header
+        name: X-CSRF-TOKEN
+        required: true
+        type: string
       - description: cookie
         in: header
         name: cookie

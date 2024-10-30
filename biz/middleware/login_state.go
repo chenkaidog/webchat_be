@@ -39,5 +39,7 @@ func LoginSession() app.HandlerFunc {
 		ctx = context.WithValue(ctx, consts.SessionKeyLoginIP, originIP)
 		ctx = context.WithValue(ctx, consts.SessionKeyDevice, originDevice)
 		ctx = context.WithValue(ctx, consts.SessionKeyAccountId, accountId)
+
+		c.Next(ctx)
 	}
 }

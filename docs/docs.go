@@ -102,6 +102,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "csrf token",
+                        "name": "X-CSRF-TOKEN",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "cookie",
                         "name": "cookie",
                         "in": "header",
