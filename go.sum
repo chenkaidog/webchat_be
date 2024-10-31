@@ -98,6 +98,8 @@ github.com/hertz-contrib/logger/accesslog v0.0.0-20240623133421-6fb592ed8d10 h1:
 github.com/hertz-contrib/logger/accesslog v0.0.0-20240623133421-6fb592ed8d10/go.mod h1:vB3TNAD0IvvDhfY1SWSeCaAVbWleDKEuQ4zOK70hb64=
 github.com/hertz-contrib/sessions v1.0.3 h1:lXBcmpPlMUhVSua54lxrIzJwhKXaI6zZcc+RgQx8xrE=
 github.com/hertz-contrib/sessions v1.0.3/go.mod h1:46/DHSScV2EcK08er3IFvGHbh6a7VLMMiMlI+30QXoA=
+github.com/hertz-contrib/sse v0.0.5 h1:VQJ8Yv+mQKp8nkRfbzfxPH1fQTEpGP+ZV4Lhkp4L0Oc=
+github.com/hertz-contrib/sse v0.0.5/go.mod h1:hCL17JP8wGf4l3zvbkSdwtYV+3Ikdu3VvpTdeOKM2uE=
 github.com/hertz-contrib/swagger v0.1.0 h1:FlnMPRHuvAt/3pt3KCQRZ6RH1g/agma9SU70Op2Pb58=
 github.com/hertz-contrib/swagger v0.1.0/go.mod h1:Bt5i+Nyo7bGmYbuEfMArx7raf1oK+nWVgYbEvhpICKE=
 github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD/E=
@@ -132,6 +134,7 @@ github.com/nyaruka/phonenumbers v1.0.55 h1:bj0nTO88Y68KeUQ/n3Lo2KgK7lM1hF7L9NFuw
 github.com/nyaruka/phonenumbers v1.0.55/go.mod h1:sDaTZ/KPX5f8qyV9qN+hIm+4ZBARJrupC6LuhshJq1U=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/r3labs/sse/v2 v2.10.0 h1:hFEkLLFY4LDifoHdiCN/LlGBAdVJYsANaLqNYa1l/v0=
 github.com/rbcervilla/redisstore/v9 v9.0.0 h1:wOPbBaydbdxzi1gTafDftCI/Z7vnsXw0QDPCuhiMG0g=
 github.com/rbcervilla/redisstore/v9 v9.0.0/go.mod h1:q/acLpoKkTZzIsBYt0R4THDnf8W/BH6GjQYvxDSSfdI=
 github.com/redis/go-redis/v9 v9.3.0/go.mod h1:hdY0cQFCN4fnSYT6TkisLufl/4W5UIXyv0b/CLO2V2M=
@@ -223,8 +226,10 @@ golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8T
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 h1:E7g+9GITq07hpfrRu66IVDexMakfv52eLZ2CXBWiKr4=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 google.golang.org/protobuf v1.26.0-rc.1/go.mod h1:jlhhOSvTdKEhbULTjvd4ARK9grFBp09yW+WbY/TyQbw=
-google.golang.org/protobuf v1.27.1 h1:SnqbnDw1V7RiZcXPx5MEeqPv2s79L9i7BJUlG/+RurQ=
 google.golang.org/protobuf v1.27.1/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQnmE0givc=
+google.golang.org/protobuf v1.28.1 h1:d0NfwRgPtno5B1Wa6L2DAG+KivqkdutMf1UhdNx175w=
+google.golang.org/protobuf v1.28.1/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqwMG9pJV4I=
+gopkg.in/cenkalti/backoff.v1 v1.1.0 h1:Arh75ttbsvlpVA7WtVpH4u9h6Zl46xuptxqLxPiSo4Y=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=

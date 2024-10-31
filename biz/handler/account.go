@@ -9,7 +9,6 @@ import (
 	"webchat_be/biz/model/consts"
 	"webchat_be/biz/model/dto"
 	"webchat_be/biz/model/errs"
-	"webchat_be/biz/model/po"
 	"webchat_be/biz/util/encode"
 	"webchat_be/biz/util/origin"
 	"webchat_be/biz/util/random"
@@ -239,14 +238,9 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	}
 
 	salt := random.RandStr(16)
-	_ = dao.NewAccountDao().Create(ctx, &po.Account{
-		AccountID: "test_account_id",
-		Email:     registerReq.Email,
-		Username:  registerReq.Username,
-		Password:  encode.EncodePassword(salt, registerReq.Password),
-		Salt:      salt,
-		Status:    "valid",
-	})
+	password := encode.EncodePassword(salt, registerReq.Password)
+	hlog.CtxInfof(ctx, "salt: %+v\npassword: %+v\nencode: %+v",
+		[]byte(salt), []byte(registerReq.Password), []byte(password))
 
 	dto.SuccessResp(c, &dto.RegisterResp{})
 	return

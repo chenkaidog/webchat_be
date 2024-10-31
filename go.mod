@@ -9,6 +9,7 @@ require (
 	github.com/hertz-contrib/cors v0.1.0
 	github.com/hertz-contrib/logger/accesslog v0.0.0-20240623133421-6fb592ed8d10
 	github.com/hertz-contrib/sessions v1.0.3
+	github.com/hertz-contrib/sse v0.0.5
 	github.com/hertz-contrib/swagger v0.1.0
 	github.com/mssola/user_agent v0.6.0
 	github.com/rbcervilla/redisstore/v9 v9.0.0
@@ -65,5 +66,5 @@ require (
 	golang.org/x/sys v0.24.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.11.0 // indirect
-	google.golang.org/protobuf v1.27.1 // indirect
+	google.golang.org/protobuf v1.28.1 // indirect
 )
