@@ -5,6 +5,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hertz-contrib/sessions"
+	"net/http"
 	"webchat_be/biz/dao"
 	"webchat_be/biz/model/consts"
 	"webchat_be/biz/model/dto"
@@ -31,7 +32,7 @@ func Login(ctx context.Context, c *app.RequestContext) {
 	var LoginReq dto.LoginReq
 	if stdErr := c.BindAndValidate(&LoginReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
-		dto.FailResp(c, errs.ParamError)
+		c.AbortWithMsg("body invalid", http.StatusBadRequest)
 		return
 	}
 
@@ -127,7 +128,7 @@ func Logout(ctx context.Context, c *app.RequestContext) {
 	var logoutReq dto.LogoutReq
 	if stdErr := c.BindAndValidate(&logoutReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
-		dto.FailResp(c, errs.ParamError)
+		c.AbortWithMsg("body invalid", http.StatusBadRequest)
 		return
 	}
 
@@ -161,7 +162,7 @@ func UpdatePassword(ctx context.Context, c *app.RequestContext) {
 	var logoutReq dto.PasswordUpdateReq
 	if stdErr := c.BindAndValidate(&logoutReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
-		dto.FailResp(c, errs.ParamError)
+		c.AbortWithMsg("body invalid", http.StatusBadRequest)
 		return
 	}
 
@@ -185,7 +186,7 @@ func ForgetPassword(ctx context.Context, c *app.RequestContext) {
 	var logoutReq dto.ForgetPasswordReq
 	if stdErr := c.BindAndValidate(&logoutReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
-		dto.FailResp(c, errs.ParamError)
+		c.AbortWithMsg("body invalid", http.StatusBadRequest)
 		return
 	}
 
@@ -209,7 +210,7 @@ func ResetPassword(ctx context.Context, c *app.RequestContext) {
 	var logoutReq dto.ResetPasswordReq
 	if stdErr := c.BindAndValidate(&logoutReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
-		dto.FailResp(c, errs.ParamError)
+		c.AbortWithMsg("body invalid", http.StatusBadRequest)
 		return
 	}
 
@@ -233,7 +234,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	var registerReq dto.RegisterReq
 	if stdErr := c.BindAndValidate(&registerReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
-		dto.FailResp(c, errs.ParamError)
+		c.AbortWithMsg("body invalid", http.StatusBadRequest)
 		return
 	}
 
@@ -261,7 +262,7 @@ func RegisterVerify(ctx context.Context, c *app.RequestContext) {
 	var registerReq dto.RegisterVerifyReq
 	if stdErr := c.BindAndValidate(&registerReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
-		dto.FailResp(c, errs.ParamError)
+		c.AbortWithMsg("body invalid", http.StatusBadRequest)
 		return
 	}
 

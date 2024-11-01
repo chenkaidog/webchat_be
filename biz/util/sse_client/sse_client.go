@@ -6,51 +6,53 @@ import (
 	"context"
 	"net/http"
 	"runtime/debug"
+	"webchat_be/biz/model/domain"
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
-type Handler func(ctx context.Context, event *SseEvent) bool
+type Handler = func(ctx context.Context, data []byte) *domain.StreamingResp
 
-func HandleSseResp(ctx context.Context, resp *http.Response, handle Handler, closeF func()) {
-	stopCh := make(chan interface{})
-	eventCh := readStreamResp(ctx, resp, stopCh)
+func HandleSeeResp(ctx context.Context, resp *http.Response, handler Handler) chan *domain.StreamingResp {
+	streamChan := make(chan *domain.StreamingResp)
+	eventChan := readStreamResp(ctx, resp)
 
 	go func() {
 		defer func() {
-			close(stopCh)
-			closeF()
-
 			if rec := recover(); rec != nil {
 				hlog.CtxErrorf(ctx, "panic recover: rec: %v\n%s", rec, debug.Stack())
 			}
+			close(streamChan)
 		}()
 
 		for {
 			select {
 			case <-ctx.Done():
 				return
-			case event, ok := <-eventCh:
+			case event, ok := <-eventChan:
 				if !ok {
 					return
 				}
-				if event != nil {
-					if handle(ctx, event) {
-						return
-					}
+				if event == nil || event.Data == nil {
+					continue
+				}
+				if parseResp := handler(ctx, event.Data); parseResp != nil {
+					streamChan <- parseResp
 				}
 			}
 		}
 	}()
+
+	return streamChan
 }
 
-func readStreamResp(ctx context.Context, resp *http.Response, stopCh chan interface{}) chan *SseEvent {
+func readStreamResp(ctx context.Context, resp *http.Response) chan *SseEvent {
 	eventCh := make(chan *SseEvent)
 
 	go func() {
 		defer func() {
 			close(eventCh)
-			resp.Body.Close()
+			_ = resp.Body.Close()
 			hlog.CtxDebugf(ctx, "finally close read loop...")
 
 			if rec := recover(); rec != nil {
@@ -70,8 +72,6 @@ func readStreamResp(ctx context.Context, resp *http.Response, stopCh chan interf
 
 			select {
 			case eventCh <- parseEvent(data):
-			case <-stopCh:
-				return
 			case <-ctx.Done():
 				return
 			}

@@ -33,13 +33,18 @@ func GetOpenAIConf() OpenaiConf {
 	return globalConfig.Openai
 }
 
+func GetHttpProxyConf() HttpProxyConf {
+	return globalConfig.HttpProxy
+}
+
 var globalConfig ServiceConf
 
 type ServiceConf struct {
-	MySQL  MySQLConf    `yaml:"mysql"`
-	Redis  RedisConf    `yaml:"redis"`
-	Baidu  BaiduAppConf `yaml:"baidu"`
-	Openai OpenaiConf   `yaml:"openai"`
+	MySQL     MySQLConf     `yaml:"mysql"`
+	Redis     RedisConf     `yaml:"redis"`
+	Baidu     BaiduAppConf  `yaml:"baidu"`
+	Openai    OpenaiConf    `yaml:"openai"`
+	HttpProxy HttpProxyConf `yaml:"http_proxy"`
 }
 
 type MySQLConf struct {
@@ -64,4 +69,8 @@ type BaiduAppConf struct {
 
 type OpenaiConf struct {
 	ApiKey string `yaml:"api_key"`
+}
+
+type HttpProxyConf struct {
+	Url string `yaml:"url"`
 }

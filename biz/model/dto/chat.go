@@ -10,9 +10,6 @@ type ChatCreateReq struct {
 	Messages []Message `json:"messages" binding:"required,max=20"`
 }
 
-type ChatCreateResp struct {
-}
-
 type ChatStreamResp struct {
 	CreatedAt int64  `json:"created_at,omitempty"`
 	IsEnd     bool   `json:"is_end,omitempty"`

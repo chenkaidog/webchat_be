@@ -3,13 +3,7 @@
 package main
 
 import (
-	"context"
-	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"github.com/hertz-contrib/sse"
-	"net/http"
-	"time"
 	"webchat_be/biz/handler"
 	"webchat_be/biz/middleware"
 )
@@ -19,6 +13,7 @@ func customizedRegister(r *server.Hertz) {
 	apiV1 := r.Group("/api/v1")
 	{
 		apiV1.GET("/ping", handler.Ping)
+
 		account := apiV1.Group("/account")
 		{
 			account.POST("/login", handler.Login)
@@ -29,45 +24,20 @@ func customizedRegister(r *server.Hertz) {
 
 			loginAccount := account.Group("/", middleware.LoginStateVerify()...)
 			{
-				loginAccount.GET("/models", handler.GetModels)
 				loginAccount.GET("/info", handler.GetAccountInfo)
 				loginAccount.POST("/logout", handler.Logout)
 				loginAccount.POST("/update_password", handler.UpdatePassword)
 			}
+		}
 
+		model := apiV1.Group("/model", middleware.LoginStateVerify()...)
+		{
+			model.GET("/list", handler.GetModels)
+		}
+
+		chat := apiV1.Group("/chat", middleware.LoginStateVerify()...)
+		{
+			chat.POST("/stream", handler.StreamingChat)
 		}
 	}
-
-	r.POST("/sse", func(ctx context.Context, c *app.RequestContext) {
-		// 客户端可以通过 Last-Event-ID 告知服务器收到的最后一个事件
-		lastEventID := sse.GetLastEventID(c)
-		hlog.CtxInfof(ctx, "last event ID: %s", lastEventID)
-
-		var req SseReq
-		if err := c.BindAndValidate(&req); err != nil {
-			c.AbortWithMsg(err.Error(), 500)
-			return
-		}
-
-		hlog.CtxInfof(ctx, "SseReq: %+v", req)
-
-		// 在第一次渲染调用之前必须先行设置状态代码和响应头文件
-		c.SetStatusCode(http.StatusOK)
-		s := sse.NewStream(c)
-		for t := range time.NewTicker(1 * time.Second).C {
-			event := &sse.Event{
-				Event: "timestamp",
-				Data:  []byte(t.Format(time.RFC3339)),
-			}
-			err := s.Publish(event)
-			if err != nil {
-				return
-			}
-		}
-	})
-}
-
-type SseReq struct {
-	A string   `json:"a"`
-	B []string `json:"b"`
 }

@@ -287,68 +287,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/account/models": {
-            "get": {
-                "description": "获取模型列表",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "model"
-                ],
-                "summary": "获取模型列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "csrf token",
-                        "name": "X-CSRF-TOKEN",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/dto.CommonResp"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/dto.ModelQueryResp"
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        "headers": {
-                            "set-cookie": {
-                                "type": "string",
-                                "description": "cookie"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.CommonResp"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.CommonResp"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/account/register": {
             "post": {
                 "description": "用户注册接口，请求后获取验证码，然后才能创建",
@@ -606,6 +544,119 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/chat/stream": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/event-stream"
+                ],
+                "tags": [
+                    "chat"
+                ],
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ChatCreateReq"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "csrf token",
+                        "name": "X-CSRF-TOKEN",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CommonResp"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CommonResp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CommonResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/model/list": {
+            "get": {
+                "description": "获取模型列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "model"
+                ],
+                "summary": "获取模型列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "csrf token",
+                        "name": "X-CSRF-TOKEN",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/dto.CommonResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.ModelQueryResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "headers": {
+                            "set-cookie": {
+                                "type": "string",
+                                "description": "cookie"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CommonResp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CommonResp"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/ping": {
             "get": {
                 "description": "测试 Description",
@@ -634,6 +685,25 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ChatCreateReq": {
+            "type": "object",
+            "required": [
+                "messages",
+                "model_id"
+            ],
+            "properties": {
+                "messages": {
+                    "type": "array",
+                    "maxItems": 20,
+                    "items": {
+                        "$ref": "#/definitions/dto.Message"
+                    }
+                },
+                "model_id": {
                     "type": "string"
                 }
             }
@@ -707,6 +777,21 @@ const docTemplate = `{
         },
         "dto.LogoutResp": {
             "type": "object"
+        },
+        "dto.Message": {
+            "type": "object",
+            "required": [
+                "content",
+                "role"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/dto.Role"
+                }
+            }
         },
         "dto.Model": {
             "type": "object",
@@ -815,6 +900,19 @@ const docTemplate = `{
         },
         "dto.ResetPasswordResp": {
             "type": "object"
+        },
+        "dto.Role": {
+            "type": "string",
+            "enum": [
+                "system",
+                "user",
+                "assistant"
+            ],
+            "x-enum-varnames": [
+                "RoleSystem",
+                "RoleUser",
+                "RoleAssistant"
+            ]
         }
     }
 }`

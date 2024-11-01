@@ -11,6 +11,19 @@ definitions:
       username:
         type: string
     type: object
+  dto.ChatCreateReq:
+    properties:
+      messages:
+        items:
+          $ref: '#/definitions/dto.Message'
+        maxItems: 20
+        type: array
+      model_id:
+        type: string
+    required:
+    - messages
+    - model_id
+    type: object
   dto.CommonResp:
     properties:
       code:
@@ -57,6 +70,16 @@ definitions:
   dto.LogoutReq:
     type: object
   dto.LogoutResp:
+    type: object
+  dto.Message:
+    properties:
+      content:
+        type: string
+      role:
+        $ref: '#/definitions/dto.Role'
+    required:
+    - content
+    - role
     type: object
   dto.Model:
     properties:
@@ -133,6 +156,16 @@ definitions:
     type: object
   dto.ResetPasswordResp:
     type: object
+  dto.Role:
+    enum:
+    - system
+    - user
+    - assistant
+    type: string
+    x-enum-varnames:
+    - RoleSystem
+    - RoleUser
+    - RoleAssistant
 info:
   contact:
     name: hertz-contrib
@@ -307,44 +340,6 @@ paths:
       summary: 用户登出接口
       tags:
       - account
-  /api/v1/account/models:
-    get:
-      consumes:
-      - application/json
-      description: 获取模型列表
-      parameters:
-      - description: csrf token
-        in: header
-        name: X-CSRF-TOKEN
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          headers:
-            set-cookie:
-              description: cookie
-              type: string
-          schema:
-            allOf:
-            - $ref: '#/definitions/dto.CommonResp'
-            - properties:
-                data:
-                  $ref: '#/definitions/dto.ModelQueryResp'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/dto.CommonResp'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/dto.CommonResp'
-      summary: 获取模型列表
-      tags:
-      - model
   /api/v1/account/register:
     post:
       consumes:
@@ -502,6 +497,77 @@ paths:
       summary: 用户修改密码接口
       tags:
       - account
+  /api/v1/chat/stream:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChatCreateReq'
+      - description: csrf token
+        in: header
+        name: X-CSRF-TOKEN
+        required: true
+        type: string
+      produces:
+      - text/event-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CommonResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.CommonResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.CommonResp'
+      tags:
+      - chat
+  /api/v1/model/list:
+    get:
+      consumes:
+      - application/json
+      description: 获取模型列表
+      parameters:
+      - description: csrf token
+        in: header
+        name: X-CSRF-TOKEN
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            set-cookie:
+              description: cookie
+              type: string
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.CommonResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ModelQueryResp'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.CommonResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.CommonResp'
+      summary: 获取模型列表
+      tags:
+      - model
   /api/v1/ping:
     get:
       consumes:

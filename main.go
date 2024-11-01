@@ -11,6 +11,7 @@ import (
 	"github.com/hertz-contrib/logger/accesslog"
 	"github.com/hertz-contrib/swagger"
 	swaggerFiles "github.com/swaggo/files"
+	"webchat_be/biz/chat/baidu"
 	"webchat_be/biz/config"
 	"webchat_be/biz/db"
 	"webchat_be/biz/middleware"
@@ -34,6 +35,7 @@ func main() {
 	logger.Init()
 	config.Init()
 	db.Init()
+	baidu.Init()
 
 	vd := go_playground.NewValidator()
 

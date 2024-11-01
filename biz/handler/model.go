@@ -20,7 +20,7 @@ import (
 //	@Success		200				{object}	dto.CommonResp{data=dto.ModelQueryResp}
 //	@Header			200				{string}	set-cookie	"cookie"
 //	@Failure		400,500			{object}	dto.CommonResp
-//	@Router			/api/v1/account/models [GET]
+//	@Router			/api/v1/model/list [GET]
 func GetModels(ctx context.Context, c *app.RequestContext) {
 	accountId := ctx.Value(consts.SessionKeyAccountId).(string)
 

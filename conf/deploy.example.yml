@@ -17,3 +17,6 @@ baidu:
 
 openai:
   api_key: ""
+
+http_proxy:
+  url: ""
