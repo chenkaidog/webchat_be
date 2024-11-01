@@ -3,6 +3,7 @@ package chat
 import (
 	"context"
 	"webchat_be/biz/chat/baidu"
+	"webchat_be/biz/chat/openai"
 	"webchat_be/biz/model/domain"
 )
 
@@ -15,6 +16,7 @@ func NewChatImpl(platform, model string) Inf {
 	case domain.PlatformBaidu:
 		return baidu.NewChat(model)
 	case domain.PlatformOpenai:
+		return openai.NewChat(model)
 	}
 
 	return nil

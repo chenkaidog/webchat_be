@@ -62,10 +62,12 @@ func StreamingChat(ctx context.Context, c *app.RequestContext) {
 				endPublish(ssePublisher)
 			}
 
-			break
+			return
 		}
 
-		msgPublish(ssePublisher, chatResp.Msg)
+		if err := msgPublish(ssePublisher, chatResp.Msg); err != nil {
+			return
+		}
 	}
 }
 
@@ -114,14 +116,15 @@ func endPublish(stream *sse.Stream) {
 	})
 }
 
-func msgPublish(stream *sse.Stream, content string) {
+func msgPublish(stream *sse.Stream, content string) error {
 	resp := &dto.ChatStreamResp{
 		CreatedAt: time.Now().Unix(),
 		IsEnd:     false,
 		Content:   content,
 	}
 	data, _ := json.Marshal(resp)
-	_ = stream.Publish(&sse.Event{
+
+	return stream.Publish(&sse.Event{
 		Event: "data",
 		Data:  data,
 	})

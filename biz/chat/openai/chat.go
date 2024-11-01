@@ -1,14 +1,14 @@
-package baidu
+package openai
 
 import (
 	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"io"
 	"net/http"
+	"webchat_be/biz/config"
 	"webchat_be/biz/model/domain"
 	"webchat_be/biz/util/http_client"
 	"webchat_be/biz/util/sse_client"
@@ -29,9 +29,10 @@ func (c *Chat) StreamChat(ctx context.Context, contents []*domain.ChatContent) (
 	if err != nil {
 		return nil, err
 	}
-	httpResp, err := http_client.NewHttpClient(false).Do(httpReq)
+
+	httpResp, err := http_client.NewHttpClient(true).Do(httpReq)
 	if err != nil {
-		hlog.CtxErrorf(ctx, "http request err: %v", err)
+		hlog.CtxErrorf(ctx, "http request failed: %v", err)
 		return nil, err
 	}
 	if httpResp.StatusCode != http.StatusOK {
@@ -41,47 +42,43 @@ func (c *Chat) StreamChat(ctx context.Context, contents []*domain.ChatContent) (
 		}
 
 		hlog.CtxErrorf(ctx, "status_code: %d, error_msg: %s", httpResp.StatusCode, respContent)
-		return nil, errors.New(string(respContent))
+		return nil, errors.New("request fails")
 	}
 
 	return sse_client.HandleSeeResp(ctx, httpResp, parseStreamingResp), nil
 }
 
 func (c *Chat) newStreamChatRequest(ctx context.Context, contents []*domain.ChatContent) (*http.Request, error) {
-	var messages []*Message
+	var messages []Message
 	for _, content := range contents {
-		messages = append(messages, &Message{
-			Role:    roleMapper[content.Role],
-			Content: content.Content,
-		},
+		messages = append(
+			messages,
+			Message{
+				Role:    roleMapper[content.Role],
+				Content: content.Content,
+			},
 		)
 	}
 
-	reqBody, err := json.Marshal(&ChatCreateReq{
-		Stream:   true,
-		Messages: messages,
-	},
+	reqBody, err := json.Marshal(
+		&ChatCreateReq{
+			Model:    c.model,
+			Stream:   true,
+			Messages: messages,
+		},
 	)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "json marshal err: %v", err)
 		return nil, err
 	}
 
-	requestUrl := fmt.Sprintf(chatUrl, c.model)
-	req, err := http.NewRequest(http.MethodPost, requestUrl, bytes.NewBuffer(reqBody))
+	req, err := http.NewRequest(http.MethodPost, chatUrl, bytes.NewBuffer(reqBody))
 	if err != nil {
-		hlog.CtxErrorf(ctx, "new request err: %v", err)
+		hlog.CtxErrorf(ctx, "new http request err: %v", err)
 		return nil, err
 	}
-
-	if localAccessToken == nil {
-		hlog.CtxErrorf(ctx, "access token not init: %v", err)
-		return nil, fmt.Errorf("access token not init")
-	}
-
-	param := req.URL.Query()
-	param.Set("access_token", localAccessToken.AccessToken)
-	req.URL.RawQuery = param.Encode()
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+config.GetOpenAIConf().ApiKey)
 
 	return req, nil
 }
@@ -97,18 +94,22 @@ func parseStreamingResp(ctx context.Context, data []byte) *domain.StreamingResp 
 		return nil
 	}
 
-	if respBody.ErrorCode != 0 || respBody.Error != "" {
-		hlog.CtxErrorf(ctx, "request err: %s. %s.", respBody.ErrorMsg, respBody.ErrorDescription)
+	if len(respBody.Choices) > 0 {
+		choice := respBody.Choices[0]
+		if choice.FinishReason == finishReasonStop {
+			return &domain.StreamingResp{
+				Msg:     "",
+				IsEnd:   true,
+				IsError: false,
+			}
+		}
+
 		return &domain.StreamingResp{
-			Msg:     "baidu platform error",
-			IsEnd:   true,
-			IsError: true,
+			Msg:     choice.Delta.Content,
+			IsEnd:   false,
+			IsError: false,
 		}
 	}
 
-	return &domain.StreamingResp{
-		Msg:     respBody.Result,
-		IsEnd:   respBody.IsEnd,
-		IsError: false,
-	}
+	return nil
 }
