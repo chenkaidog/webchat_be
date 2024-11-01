@@ -83,6 +83,8 @@ func (c *Chat) newStreamChatRequest(ctx context.Context, contents []*domain.Chat
 	param.Set("access_token", localAccessToken.AccessToken)
 	req.URL.RawQuery = param.Encode()
 
+	hlog.CtxDebugf(ctx, "request: %+v", req)
+
 	return req, nil
 }
 

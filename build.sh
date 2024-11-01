@@ -1,5 +1,5 @@
 #!/bin/bash
-RUN_NAME=hertz_service
+RUN_NAME=web_chat
 mkdir -p output/bin
 cp -r conf/ output/
 

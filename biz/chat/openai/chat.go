@@ -79,12 +79,13 @@ func (c *Chat) newStreamChatRequest(ctx context.Context, contents []*domain.Chat
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+config.GetOpenAIConf().ApiKey)
+	hlog.CtxDebugf(ctx, "request: %+v", req)
 
 	return req, nil
 }
 
 func parseStreamingResp(ctx context.Context, data []byte) *domain.StreamingResp {
-	if data == nil {
+	if data == nil || bytes.Equal(data, []byte("[DONE]")) {
 		return nil
 	}
 

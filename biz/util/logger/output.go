@@ -19,7 +19,6 @@ const (
 	logFileMaxAge = 14
 
 	envLogLevel          = "log_level"
-	envLogFileOutput     = "log_file_output"
 	envLogOutputFileName = "log_output_filename"
 )
 
