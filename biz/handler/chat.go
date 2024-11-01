@@ -17,7 +17,7 @@ import (
 // StreamingChat 用户对话接口
 //
 //	@Tags		chat
-//	@Accept     application/json
+//	@Accept		application/json
 //	@Produce	text/event-stream
 //	@Param		req				body		dto.ChatCreateReq	true	"request body"
 //	@Param		X-CSRF-TOKEN	header		string				true	"csrf token"

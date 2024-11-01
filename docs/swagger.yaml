@@ -24,6 +24,15 @@ definitions:
     - messages
     - model_id
     type: object
+  dto.ChatStreamResp:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: integer
+      is_end:
+        type: boolean
+    type: object
   dto.CommonResp:
     properties:
       code:
@@ -519,15 +528,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.CommonResp'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/dto.CommonResp'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/dto.CommonResp'
+            $ref: '#/definitions/dto.ChatStreamResp'
       tags:
       - chat
   /api/v1/model/list:

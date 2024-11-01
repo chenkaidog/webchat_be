@@ -577,19 +577,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.CommonResp"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.CommonResp"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.CommonResp"
+                            "$ref": "#/definitions/dto.ChatStreamResp"
                         }
                     }
                 }
@@ -705,6 +693,20 @@ const docTemplate = `{
                 },
                 "model_id": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.ChatStreamResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "is_end": {
+                    "type": "boolean"
                 }
             }
         },
