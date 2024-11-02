@@ -798,10 +798,10 @@ const docTemplate = `{
         "dto.Model": {
             "type": "object",
             "properties": {
-                "model_id": {
+                "id": {
                     "type": "string"
                 },
-                "model_name": {
+                "name": {
                     "type": "string"
                 }
             }

@@ -92,9 +92,9 @@ definitions:
     type: object
   dto.Model:
     properties:
-      model_id:
+      id:
         type: string
-      model_name:
+      name:
         type: string
     type: object
   dto.ModelQueryResp:
