@@ -33,8 +33,8 @@ func GetModels(ctx context.Context, c *app.RequestContext) {
 	var resp dto.ModelQueryResp
 	for _, modelInfo := range modelInfoList {
 		resp.Models = append(resp.Models, &dto.Model{
-			ModelId:   modelInfo.ModelId,
-			ModelName: modelInfo.DisplayName,
+			Id:   modelInfo.ModelId,
+			Name: modelInfo.DisplayName,
 		})
 	}
 	dto.SuccessResp(c, resp)

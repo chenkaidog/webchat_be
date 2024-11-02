@@ -1,8 +1,8 @@
 package dto
 
 type Model struct {
-	ModelId   string `json:"model_id"`
-	ModelName string `json:"model_name"`
+	Id   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type ModelQueryResp struct {
