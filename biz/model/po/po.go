@@ -40,3 +40,15 @@ type AccountModel struct {
 func (AccountModel) TableName() string {
 	return "account_model"
 }
+
+type LoginRecord struct {
+	gorm.Model
+	AccountID string `gorm:"column:account_id"`
+	Status    string `gorm:"column:status"`
+	IP        string `gorm:"column:ip"`
+	Device    string `gorm:"column:device"`
+}
+
+func (LoginRecord) TableName() string {
+	return "login_record"
+}

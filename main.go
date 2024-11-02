@@ -11,9 +11,9 @@ import (
 	"github.com/hertz-contrib/logger/accesslog"
 	"github.com/hertz-contrib/swagger"
 	swaggerFiles "github.com/swaggo/files"
-	"webchat_be/biz/chat/baidu"
 	"webchat_be/biz/config"
 	"webchat_be/biz/db"
+	"webchat_be/biz/handler/service/chat/baidu"
 	"webchat_be/biz/middleware"
 	"webchat_be/biz/util/logger"
 	_ "webchat_be/docs"
@@ -60,7 +60,9 @@ func middlewareSuite() []app.HandlerFunc {
 			accesslog.WithAccessLogFunc(hlog.CtxInfof),
 			accesslog.WithFormat("${status} - ${latency} ${method} ${path} ${queryParams}"),
 		), // 接口日志
-		cors.Default(),       // 跨域请求
-		middleware.Session(), // 会话
+		cors.Default(),           // 跨域请求
+		middleware.IPIsAllowed(), // IP白名单
+		middleware.Session(),     // 会话
+		middleware.Limiter(),     // QPS限制器
 	}
 }

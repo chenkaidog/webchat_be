@@ -8,8 +8,8 @@ import (
 	"github.com/hertz-contrib/sse"
 	"net/http"
 	"time"
-	"webchat_be/biz/chat"
 	"webchat_be/biz/dao"
+	"webchat_be/biz/handler/service/chat"
 	"webchat_be/biz/model/domain"
 	"webchat_be/biz/model/dto"
 )

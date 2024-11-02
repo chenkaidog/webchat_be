@@ -1,12 +1,12 @@
 package dto
 
 type Message struct {
-	Role    Role   `form:"role" json:"role" binding:"required"`
+	Role    Role   `form:"role" json:"role" binding:"required,max=32"`
 	Content string `form:"content" json:"content" binding:"required"`
 }
 
 type ChatCreateReq struct {
-	ModelId  string    `json:"model_id" binding:"required"`
+	ModelId  string    `json:"model_id" binding:"required,max=64"`
 	Messages []Message `json:"messages" binding:"required,max=20"`
 }
 

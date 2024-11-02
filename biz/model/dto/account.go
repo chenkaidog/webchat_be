@@ -27,7 +27,7 @@ type LogoutResp struct {
 
 type PasswordUpdateReq struct {
 	Password    string `form:"password" json:"password" binding:"required,max=128"`
-	PasswordNew string `form:"password_new" json:"password_new" binding:"required,min=8,max=128,alphanumunicode"`
+	PasswordNew string `form:"password_new" json:"password_new" binding:"required,min=8,max=128"`
 }
 
 type PasswordUpdateResp struct {
@@ -49,7 +49,7 @@ type ResetPasswordResp struct{}
 type RegisterReq struct {
 	Username string `form:"username" json:"username" binding:"required,max=64"`
 	Email    string `form:"email" json:"email" binding:"required,max=64,email"`
-	Password string `form:"password" json:"password" binding:"required,max=128,alphanumunicode"`
+	Password string `form:"password" json:"password" binding:"required,min=8,max=128"`
 }
 
 type RegisterResp struct{}

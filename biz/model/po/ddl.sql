@@ -18,6 +18,23 @@ CREATE TABLE `account`
   DEFAULT CHARSET = utf8mb4
     COMMENT '用户帐号表';
 
+CREATE TABLE `login_record`
+(
+    `id`         BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `created_at` DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+    `deleted_at` DATETIME        NULL COMMENT '删除时间',
+    `account_id` VARCHAR(128)    NOT NULL COMMENT '唯一账户ID',
+    `ip`         VARCHAR(64)     NOT NULL COMMENT '',
+    `device`     VARCHAR(64)     NOT NULL COMMENT '',
+    `status`     VARCHAR(16)     NOT NULL COMMENT '登录结果',
+    PRIMARY KEY (`id`),
+    INDEX `idx_account_created` (`account_id`, `created_at`),
+    INDEX `idx_ip_created` (`ip`, `created_at`)
+) ENGINE = INNODB
+  DEFAULT CHARSET = utf8mb4
+    COMMENT '登录记录表';
+
 CREATE TABLE `model`
 (
     `id`           BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',

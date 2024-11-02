@@ -5,6 +5,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/sessions"
 	"net/http"
+	"webchat_be/biz/handler/service"
 	"webchat_be/biz/model/consts"
 	"webchat_be/biz/util/origin"
 )
@@ -36,9 +37,15 @@ func LoginSession() app.HandlerFunc {
 			return
 		}
 
+		ctx = context.WithValue(ctx, consts.SessionKeySessID, session.ID())
 		ctx = context.WithValue(ctx, consts.SessionKeyLoginIP, originIP)
 		ctx = context.WithValue(ctx, consts.SessionKeyDevice, originDevice)
 		ctx = context.WithValue(ctx, consts.SessionKeyAccountId, accountId)
+
+		if service.SessionIsExpired(ctx, accountId, session.ID()) {
+			c.AbortWithMsg("session is expired", http.StatusUnauthorized)
+			return
+		}
 
 		c.Next(ctx)
 	}

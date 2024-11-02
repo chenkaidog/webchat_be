@@ -40,18 +40,22 @@ func Init() {
 	}
 }
 
+func GetDbConn() *gorm.DB {
+	return gormDB
+}
+
 type DbConn struct {
 	*gorm.DB
 }
 
-func NewDbConn(tx ...*gorm.DB) DbConn {
+func NewDbConn(tx ...*gorm.DB) *DbConn {
 	if len(tx) > 0 {
-		return DbConn{
+		return &DbConn{
 			DB: tx[0],
 		}
 	}
 
-	return DbConn{
+	return &DbConn{
 		DB: gormDB,
 	}
 }

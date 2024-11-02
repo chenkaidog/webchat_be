@@ -7,6 +7,7 @@ import (
 	"github.com/hertz-contrib/sessions"
 	"net/http"
 	"webchat_be/biz/dao"
+	"webchat_be/biz/handler/service"
 	"webchat_be/biz/model/consts"
 	"webchat_be/biz/model/dto"
 	"webchat_be/biz/model/errs"
@@ -29,38 +30,34 @@ import (
 //	@Failure		400,500	{object}	dto.CommonResp
 //	@Router			/api/v1/account/login [POST]
 func Login(ctx context.Context, c *app.RequestContext) {
-	var LoginReq dto.LoginReq
-	if stdErr := c.BindAndValidate(&LoginReq); stdErr != nil {
+	var loginReq dto.LoginReq
+	if stdErr := c.BindAndValidate(&loginReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
 		c.AbortWithMsg("body invalid", http.StatusBadRequest)
 		return
 	}
+	session := sessions.DefaultMany(c, consts.SessionNameAccount)
 
-	accountInfo, err := dao.NewAccountDao().QueryByUsername(ctx, LoginReq.Username)
-	if err != nil {
-		dto.FailResp(c, errs.ServerError)
+	bizResp, bizErr := service.AccountLogin(ctx, &service.LoginRequest{
+		SessID:   session.ID(),
+		Username: loginReq.Username,
+		Password: loginReq.Password,
+		IP:       origin.GetIp(c),
+		Device:   origin.GetDevice(c),
+	})
+	if bizErr != nil {
+		dto.FailResp(c, bizErr)
 		return
 	}
-	if accountInfo == nil {
-		hlog.CtxInfof(ctx, "username not exists: %s", LoginReq.Username)
-		dto.FailResp(c, errs.AccountNotExistError)
-		return
-	}
-	if encode.EncodePassword(accountInfo.Salt, LoginReq.Password) != accountInfo.Password {
-		hlog.CtxInfof(ctx, "password incorrect: %s", LoginReq.Username)
-		dto.FailResp(c, errs.PasswordIncorrect)
-		return
-	}
+	session.Set(consts.SessionKeyAccountId, bizResp.AccountId)
+	session.Set(consts.SessionKeyLoginIP, origin.GetIp(c))
+	session.Set(consts.SessionKeyDevice, origin.GetDevice(c))
 
 	csrfToken := random.RandStr(64)
 	csrfSalt := random.RandStr(64)
-
-	session := sessions.DefaultMany(c, consts.SessionNameAccount)
 	session.Set(consts.SessionKeyCsrfSalt, csrfSalt)
 	session.Set(consts.SessionKeyCsrfToken, encode.EncodePassword(csrfSalt, csrfToken))
-	session.Set(consts.SessionKeyAccountId, accountInfo.AccountID)
-	session.Set(consts.SessionKeyLoginIP, origin.GetIp(c))
-	session.Set(consts.SessionKeyDevice, origin.GetDevice(c))
+
 	if err := session.Save(); err != nil {
 		hlog.CtxInfof(ctx, "session save fail, %v", err)
 		dto.FailResp(c, errs.ServerError)
@@ -69,10 +66,10 @@ func Login(ctx context.Context, c *app.RequestContext) {
 
 	c.Header(consts.HeaderKeyCsrfToken, csrfToken)
 	dto.SuccessResp(c, &dto.LoginResp{
-		AccountID: accountInfo.AccountID,
-		Username:  accountInfo.Username,
-		Status:    accountInfo.Status,
-		Email:     accountInfo.Email,
+		AccountID: bizResp.AccountId,
+		Username:  bizResp.Username,
+		Email:     bizResp.Email,
+		Status:    bizResp.Status,
 	})
 	return
 }
@@ -133,7 +130,6 @@ func Logout(ctx context.Context, c *app.RequestContext) {
 	}
 
 	session := sessions.DefaultMany(c, consts.SessionNameAccount)
-	session.Clear()
 	session.Options(sessions.Options{MaxAge: -1})
 	if err := session.Save(); err != nil {
 		hlog.CtxInfof(ctx, "session save fail, %v", err)
@@ -141,8 +137,10 @@ func Logout(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	accountId := ctx.Value(consts.SessionKeyAccountId).(string)
+	_ = service.RemoveSession(ctx, accountId, session.ID())
+
 	dto.SuccessResp(c, &dto.LogoutResp{})
-	return
 }
 
 // UpdatePassword 用户修改密码接口
@@ -159,15 +157,34 @@ func Logout(ctx context.Context, c *app.RequestContext) {
 //	@Failure		400,500			{object}	dto.CommonResp
 //	@Router			/api/v1/account/update_password [POST]
 func UpdatePassword(ctx context.Context, c *app.RequestContext) {
-	var logoutReq dto.PasswordUpdateReq
-	if stdErr := c.BindAndValidate(&logoutReq); stdErr != nil {
+	var updateReq dto.PasswordUpdateReq
+	if stdErr := c.BindAndValidate(&updateReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
 		c.AbortWithMsg("body invalid", http.StatusBadRequest)
 		return
 	}
 
+	accountId := ctx.Value(consts.SessionKeyAccountId).(string)
+
+	if bizErr := service.AccountUpdatePassword(ctx, &service.PasswordUpdateRequest{
+		AccountId:   accountId,
+		Password:    updateReq.Password,
+		PasswordNew: updateReq.PasswordNew,
+	}); bizErr != nil {
+		dto.FailResp(c, bizErr)
+		return
+	}
+
+	session := sessions.DefaultMany(c, consts.SessionNameAccount)
+	session.Options(sessions.Options{MaxAge: -1})
+	if err := session.Save(); err != nil {
+		hlog.CtxInfof(ctx, "session save fail, %v", err)
+		dto.FailResp(c, errs.ServerError)
+		return
+	}
+
+	_ = service.RemoveSession(ctx, accountId, session.ID())
 	dto.SuccessResp(c, &dto.PasswordUpdateResp{})
-	return
 }
 
 // ForgetPassword 用户忘记密码接口

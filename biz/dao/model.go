@@ -10,18 +10,18 @@ import (
 )
 
 type ModelDao struct {
-	mysql.DbConn
+	conn *mysql.DbConn
 }
 
 func NewModelDao(tx ...*gorm.DB) *ModelDao {
 	return &ModelDao{
-		DbConn: mysql.NewDbConn(tx...),
+		conn: mysql.NewDbConn(tx...),
 	}
 }
 
 func (dao *ModelDao) QueryByModelId(ctx context.Context, modelId string) (*po.Model, error) {
 	var result *po.Model
-	err := dao.WithContext(ctx).
+	err := dao.conn.WithContext(ctx).
 		Where("model_id = ?", modelId).
 		Take(&result).Error
 	if err != nil {
@@ -37,7 +37,7 @@ func (dao *ModelDao) QueryByModelId(ctx context.Context, modelId string) (*po.Mo
 
 func (dao *ModelDao) QueryByAccountId(ctx context.Context, accountId string) ([]*po.Model, error) {
 	var result []*po.Model
-	err := dao.WithContext(ctx).
+	err := dao.conn.WithContext(ctx).
 		Model(&po.Model{}).
 		Joins("join account_model on model.model_id = account_model.model_id").
 		Where("account_model.account_id = ?", accountId).

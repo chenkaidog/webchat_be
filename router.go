@@ -3,6 +3,7 @@
 package main
 
 import (
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"webchat_be/biz/handler"
 	"webchat_be/biz/middleware"
@@ -16,7 +17,11 @@ func customizedRegister(r *server.Hertz) {
 
 		account := apiV1.Group("/account")
 		{
-			account.POST("/login", handler.Login)
+
+			account.POST("/login", []app.HandlerFunc{
+				middleware.LoginLimiter(),
+				handler.Login,
+			}...)
 			account.POST("/forget_password", handler.ForgetPassword)
 			account.POST("/reset_password", handler.ResetPassword)
 			account.POST("/register", handler.Register)
@@ -37,7 +42,11 @@ func customizedRegister(r *server.Hertz) {
 
 		chat := apiV1.Group("/chat", middleware.LoginStateVerify()...)
 		{
-			chat.POST("/stream", handler.StreamingChat)
+			chat.POST("/stream",
+				[]app.HandlerFunc{
+					middleware.ChatLimiter(),
+					handler.StreamingChat,
+				}...)
 		}
 	}
 }

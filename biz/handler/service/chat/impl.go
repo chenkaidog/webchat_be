@@ -2,8 +2,8 @@ package chat
 
 import (
 	"context"
-	"webchat_be/biz/chat/baidu"
-	"webchat_be/biz/chat/openai"
+	"webchat_be/biz/handler/service/chat/baidu"
+	"webchat_be/biz/handler/service/chat/openai"
 	"webchat_be/biz/model/domain"
 )
 
