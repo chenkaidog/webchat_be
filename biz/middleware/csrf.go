@@ -19,7 +19,6 @@ func CSRF() app.HandlerFunc {
 
 		csrfToken := c.Request.Header.Get(consts.HeaderKeyCsrfToken)
 		if encode.EncodePassword(salt, csrfToken) != encodedToken {
-			c.AbortWithMsg("csrf token invalid", http.StatusUnauthorized)
 			dto.AbortWithErr(c, errs.CsrfTokenInvalid, http.StatusUnauthorized)
 			return
 		}
