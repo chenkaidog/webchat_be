@@ -37,6 +37,7 @@ func Login(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	session := sessions.DefaultMany(c, consts.SessionNameAccount)
+	_ = session.Save() // save之后才能生成ID
 
 	bizResp, bizErr := service.AccountLogin(ctx, &service.LoginRequest{
 		SessID:   session.ID(),
