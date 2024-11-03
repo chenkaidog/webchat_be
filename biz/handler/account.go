@@ -33,7 +33,7 @@ func Login(ctx context.Context, c *app.RequestContext) {
 	var loginReq dto.LoginReq
 	if stdErr := c.BindAndValidate(&loginReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
-		c.AbortWithMsg("body invalid", http.StatusBadRequest)
+		dto.AbortWithErr(c, errs.ParamError, http.StatusBadRequest)
 		return
 	}
 	session := sessions.DefaultMany(c, consts.SessionNameAccount)
@@ -95,7 +95,7 @@ func GetAccountInfo(ctx context.Context, c *app.RequestContext) {
 	}
 	if accountInfo == nil {
 		hlog.CtxInfof(ctx, "account_id not exists: %s", accountId)
-		dto.FailResp(c, errs.AccountNotExistError)
+		dto.FailResp(c, errs.AccountNotExist)
 		return
 	}
 
@@ -125,7 +125,7 @@ func Logout(ctx context.Context, c *app.RequestContext) {
 	var logoutReq dto.LogoutReq
 	if stdErr := c.BindAndValidate(&logoutReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
-		c.AbortWithMsg("body invalid", http.StatusBadRequest)
+		dto.AbortWithErr(c, errs.ParamError, http.StatusBadRequest)
 		return
 	}
 
@@ -160,7 +160,7 @@ func UpdatePassword(ctx context.Context, c *app.RequestContext) {
 	var updateReq dto.PasswordUpdateReq
 	if stdErr := c.BindAndValidate(&updateReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
-		c.AbortWithMsg("body invalid", http.StatusBadRequest)
+		dto.AbortWithErr(c, errs.ParamError, http.StatusBadRequest)
 		return
 	}
 
@@ -183,7 +183,6 @@ func UpdatePassword(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	_ = service.RemoveSession(ctx, accountId, session.ID())
 	dto.SuccessResp(c, &dto.PasswordUpdateResp{})
 }
 
@@ -203,7 +202,7 @@ func ForgetPassword(ctx context.Context, c *app.RequestContext) {
 	var logoutReq dto.ForgetPasswordReq
 	if stdErr := c.BindAndValidate(&logoutReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
-		c.AbortWithMsg("body invalid", http.StatusBadRequest)
+		dto.AbortWithErr(c, errs.ParamError, http.StatusBadRequest)
 		return
 	}
 
@@ -227,7 +226,7 @@ func ResetPassword(ctx context.Context, c *app.RequestContext) {
 	var logoutReq dto.ResetPasswordReq
 	if stdErr := c.BindAndValidate(&logoutReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
-		c.AbortWithMsg("body invalid", http.StatusBadRequest)
+		dto.AbortWithErr(c, errs.ParamError, http.StatusBadRequest)
 		return
 	}
 
@@ -251,7 +250,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	var registerReq dto.RegisterReq
 	if stdErr := c.BindAndValidate(&registerReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
-		c.AbortWithMsg("body invalid", http.StatusBadRequest)
+		dto.AbortWithErr(c, errs.ParamError, http.StatusBadRequest)
 		return
 	}
 
@@ -279,7 +278,7 @@ func RegisterVerify(ctx context.Context, c *app.RequestContext) {
 	var registerReq dto.RegisterVerifyReq
 	if stdErr := c.BindAndValidate(&registerReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
-		c.AbortWithMsg("body invalid", http.StatusBadRequest)
+		dto.AbortWithErr(c, errs.ParamError, http.StatusBadRequest)
 		return
 	}
 

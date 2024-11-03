@@ -5,10 +5,11 @@ import (
 	"webchat_be/biz/handler/service/chat/baidu"
 	"webchat_be/biz/handler/service/chat/openai"
 	"webchat_be/biz/model/domain"
+	"webchat_be/biz/model/errs"
 )
 
 type Inf interface {
-	StreamChat(context.Context, []*domain.ChatContent) (chan *domain.StreamingResp, error)
+	StreamChat(context.Context, []*domain.ChatContent) (chan *domain.StreamingResp, errs.Error)
 }
 
 func NewChatImpl(platform, model string) Inf {

@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"io"
 	"net/http"
 	"webchat_be/biz/config"
 	"webchat_be/biz/model/domain"
+	"webchat_be/biz/model/errs"
 	"webchat_be/biz/util/http_client"
 	"webchat_be/biz/util/sse_client"
 )
@@ -24,27 +24,19 @@ func NewChat(model string) *Chat {
 	}
 }
 
-func (c *Chat) StreamChat(ctx context.Context, contents []*domain.ChatContent) (chan *domain.StreamingResp, error) {
+func (c *Chat) StreamChat(ctx context.Context, contents []*domain.ChatContent) (chan *domain.StreamingResp, errs.Error) {
 	httpReq, err := c.newStreamChatRequest(ctx, contents)
 	if err != nil {
-		return nil, err
+		return nil, errs.ServerError
 	}
-
 	httpResp, err := http_client.NewHttpClient(true).Do(httpReq)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "http request failed: %v", err)
-		return nil, err
+		return nil, errs.ServerError
 	}
-	if httpResp.StatusCode != http.StatusOK {
-		respContent, err := io.ReadAll(httpResp.Body)
-		if err != nil {
-			return nil, err
-		}
-
-		hlog.CtxErrorf(ctx, "status_code: %d, error_msg: %s", httpResp.StatusCode, respContent)
-		return nil, errors.New("request fails")
+	if bizErr := c.handleRespStatus(ctx, httpResp); bizErr != nil {
+		return nil, bizErr
 	}
-
 	return sse_client.HandleSeeResp(ctx, httpResp, parseStreamingResp), nil
 }
 
@@ -82,6 +74,29 @@ func (c *Chat) newStreamChatRequest(ctx context.Context, contents []*domain.Chat
 	hlog.CtxDebugf(ctx, "request: %+v", req)
 
 	return req, nil
+}
+
+func (c *Chat) handleRespStatus(ctx context.Context, httpResp *http.Response) errs.Error {
+	if statusCode := httpResp.StatusCode; statusCode != http.StatusOK {
+		if 400 <= statusCode && statusCode < 500 {
+			respContent, _ := io.ReadAll(httpResp.Body)
+			hlog.CtxErrorf(ctx, "status_code: %d, error_msg: %s", httpResp.StatusCode, respContent)
+
+			var errResp ErrorResp
+			_ = json.Unmarshal(respContent, &errResp)
+
+			switch statusCode {
+			case 429:
+				hlog.CtxErrorf(ctx, "rate limited or quote limited, %s, %s, %s",
+					errResp.Error.Type, errResp.Error.Code, errResp.Error.Message)
+				return errs.ExceedQuoteLimit
+			}
+		}
+
+		return errs.ServerError
+	}
+
+	return nil
 }
 
 func parseStreamingResp(ctx context.Context, data []byte) *domain.StreamingResp {

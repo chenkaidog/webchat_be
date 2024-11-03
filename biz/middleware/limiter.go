@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"time"
 	"webchat_be/biz/db/redis"
+	"webchat_be/biz/model/dto"
+	"webchat_be/biz/model/errs"
 	"webchat_be/biz/util/origin"
 )
 
@@ -15,7 +17,7 @@ func Limiter() app.HandlerFunc {
 		key := fmt.Sprintf("qps_limiter_%s_%s", origin.GetIp(c), c.Path())
 		ok, err := redis.GetRedisClient().SetNX(ctx, key, true, time.Second/10).Result()
 		if err == nil && !ok {
-			c.AbortWithMsg("qps too high", http.StatusTooManyRequests)
+			dto.AbortWithErr(c, errs.TooManyRequest, http.StatusTooManyRequests)
 			return
 		}
 

@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"io"
 	"net/http"
+	"strings"
 	"webchat_be/biz/model/domain"
+	"webchat_be/biz/model/errs"
 	"webchat_be/biz/util/http_client"
 	"webchat_be/biz/util/sse_client"
 )
@@ -24,24 +25,18 @@ func NewChat(model string) *Chat {
 	}
 }
 
-func (c *Chat) StreamChat(ctx context.Context, contents []*domain.ChatContent) (chan *domain.StreamingResp, error) {
+func (c *Chat) StreamChat(ctx context.Context, contents []*domain.ChatContent) (chan *domain.StreamingResp, errs.Error) {
 	httpReq, err := c.newStreamChatRequest(ctx, contents)
 	if err != nil {
-		return nil, err
+		return nil, errs.ServerError
 	}
 	httpResp, err := http_client.NewHttpClient(false).Do(httpReq)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "http request err: %v", err)
-		return nil, err
+		return nil, errs.ServerError
 	}
-	if httpResp.StatusCode != http.StatusOK {
-		respContent, err := io.ReadAll(httpResp.Body)
-		if err != nil {
-			return nil, err
-		}
-
-		hlog.CtxErrorf(ctx, "status_code: %d, error_msg: %s", httpResp.StatusCode, respContent)
-		return nil, errors.New(string(respContent))
+	if bizErr := c.handleRespStatus(ctx, httpResp); bizErr != nil {
+		return nil, bizErr
 	}
 
 	return sse_client.HandleSeeResp(ctx, httpResp, parseStreamingResp), nil
@@ -88,6 +83,36 @@ func (c *Chat) newStreamChatRequest(ctx context.Context, contents []*domain.Chat
 	return req, nil
 }
 
+func (c *Chat) handleRespStatus(ctx context.Context, httpResp *http.Response) errs.Error {
+	if httpResp.StatusCode != http.StatusOK {
+		respContent, _ := io.ReadAll(httpResp.Body)
+		hlog.CtxErrorf(ctx, "status_code: %d, error_msg: %s", httpResp.StatusCode, respContent)
+		return errs.ServerError
+	} else if strings.Contains(httpResp.Header.Get("Content-Type"), "json") {
+		respContent, _ := io.ReadAll(httpResp.Body)
+		var errRespBody ChatError
+		if err := json.Unmarshal(respContent, &errRespBody); err != nil {
+			hlog.CtxErrorf(ctx, "json unmarshal err: %v", err)
+			return errs.ServerError
+		}
+
+		// https://cloud.baidu.com/doc/WENXINWORKSHOP/s/tlmyncueh
+		switch errRespBody.ErrorCode {
+		case 4, 18:
+			hlog.CtxErrorf(ctx, "request limit reached err: %v", errRespBody.ErrorMsg)
+			return errs.ChatRateLimitReached
+		case 17:
+			hlog.CtxWarnf(ctx, "exceed quote limit: %s", errRespBody.ErrorMsg)
+			return errs.ExceedQuoteLimit
+		default:
+			hlog.CtxErrorf(ctx, "api err, %d:%v", errRespBody.ErrorCode, errRespBody.ErrorMsg)
+			return errs.ServerError
+		}
+	}
+
+	return nil
+}
+
 func parseStreamingResp(ctx context.Context, data []byte) *domain.StreamingResp {
 	if data == nil {
 		return nil
@@ -99,8 +124,8 @@ func parseStreamingResp(ctx context.Context, data []byte) *domain.StreamingResp 
 		return nil
 	}
 
-	if respBody.ErrorCode != 0 || respBody.Error != "" {
-		hlog.CtxErrorf(ctx, "request err: %s. %s.", respBody.ErrorMsg, respBody.ErrorDescription)
+	if respBody.Error != "" {
+		hlog.CtxErrorf(ctx, "request err: %s", respBody.ErrorDescription)
 		return &domain.StreamingResp{
 			Msg:     "baidu platform error",
 			IsEnd:   true,

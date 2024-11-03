@@ -50,6 +50,10 @@ func RemoveSession(ctx context.Context, accountId, sessId string) error {
 	return redisclient.GetRedisClient().ZRem(ctx, parseAccountLoginLimitKey(accountId), sessId).Err()
 }
 
+func RemoveAllSession(ctx context.Context, accountId string) error {
+	return redisclient.GetRedisClient().Del(ctx, parseAccountLoginLimitKey(accountId)).Err()
+}
+
 func SessionIsExpired(ctx context.Context, accountId, sessId string) bool {
 	_, err := redisclient.GetRedisClient().
 		ZScore(ctx, parseAccountLoginLimitKey(accountId), sessId).Result()

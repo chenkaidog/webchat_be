@@ -36,7 +36,7 @@ func AccountLogin(ctx context.Context, req *LoginRequest) (resp LoginResponse, l
 		}
 		if accountInfo == nil {
 			hlog.CtxInfof(ctx, "username not exists: %s", req.Username)
-			loginResult = errs.AccountNotExistError
+			loginResult = errs.AccountNotExist
 			_ = dao.NewLoginRecordDao(tx).Create(ctx, &po.LoginRecord{
 				AccountID: "",
 				Status:    domain.LoginRecordFailed,
@@ -98,8 +98,13 @@ func AccountUpdatePassword(ctx context.Context, req *PasswordUpdateRequest) (upd
 			return nil
 		}
 
-		encodedPwd := encode.EncodePassword(accountInfo.Salt, req.PasswordNew)
-		return accountDao.UpdatePassword(ctx, req.AccountId, encodedPwd, random.RandStr(32))
+		salt := random.RandStr(32)
+		encodedPwd := encode.EncodePassword(salt, req.PasswordNew)
+		if err := accountDao.UpdatePassword(ctx, req.AccountId, encodedPwd, salt); err != nil {
+			return err
+		}
+
+		return RemoveAllSession(ctx, req.AccountId)
 	})
 	if txErr != nil {
 		hlog.CtxErrorf(ctx, "txErr: %v", txErr)

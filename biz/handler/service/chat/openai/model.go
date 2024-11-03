@@ -46,4 +46,13 @@ type Delta struct {
 	Content string `json:"content"`
 }
 
+type ErrorResp struct {
+	Error struct {
+		Message string      `json:"message"`
+		Type    string      `json:"type"`
+		Param   interface{} `json:"param"`
+		Code    string      `json:"code"`
+	} `json:"error"`
+}
+
 const finishReasonStop = "stop"

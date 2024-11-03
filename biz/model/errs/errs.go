@@ -58,16 +58,20 @@ func ErrorEqual(err1, err2 Error) bool {
 }
 
 var (
-	Success     = New(0, "success")
-	ServerError = New(1_0001, "internal server error")
-	ParamError  = New(1_0002, "param error")
+	Success          = New(0, "success")
+	ServerError      = New(1_0001, "internal server error")
+	ParamError       = New(1_0002, "param error")
+	Unauthorized     = New(1_0003, "user unauthorized")
+	CsrfTokenInvalid = New(1_0004, "csrf token invalid")
+	TooManyRequest   = New(1_0005, "too many request")
+	LoginReachLimit  = New(1_0006, "login reach limit")
+	RequestBlocked   = New(1_0007, "request is blocked")
 
-	AccountNotExistError      = New(2_0001, "account not exist or password incorrect")
-	PasswordIncorrect         = AccountNotExistError
-	AccountStatusInvalidError = New(2_0002, "account is invalid")
+	AccountNotExist      = New(2_0001, "account not exist or password incorrect")
+	PasswordIncorrect    = AccountNotExist
+	AccountStatusInvalid = New(2_0002, "account is invalid")
 
-	PlatformError        = New(3_0001, "platform error")
-	ModelNotSupported    = New(3_0002, "model is not supported")
-	PlatformNotSupported = New(3_0003, "platform not supported")
-	ResponseTimeoutError = New(3_0004, "response is timeout")
+	ModelNotSupported    = New(3_0001, "model is not supported")
+	ChatRateLimitReached = New(3_0002, "request limit reached")
+	ExceedQuoteLimit     = New(3_0003, "exceed quote limit") // 账户余额不足
 )

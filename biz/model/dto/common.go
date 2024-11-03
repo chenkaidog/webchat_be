@@ -29,3 +29,11 @@ func FailResp(c *app.RequestContext, bizErr errs.Error) {
 		Message: bizErr.Msg(),
 	})
 }
+
+func AbortWithErr(c *app.RequestContext, bizErr errs.Error, code int) {
+	c.AbortWithStatusJSON(code, &CommonResp{
+		Success: false,
+		Code:    bizErr.Code(),
+		Message: bizErr.Msg(),
+	})
+}

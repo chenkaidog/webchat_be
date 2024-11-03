@@ -12,6 +12,7 @@ import (
 	"webchat_be/biz/handler/service/chat"
 	"webchat_be/biz/model/domain"
 	"webchat_be/biz/model/dto"
+	"webchat_be/biz/model/errs"
 )
 
 // StreamingChat 用户对话接口
@@ -27,28 +28,34 @@ func StreamingChat(ctx context.Context, c *app.RequestContext) {
 	var chatCreateReq dto.ChatCreateReq
 	if stdErr := c.BindAndValidate(&chatCreateReq); stdErr != nil {
 		hlog.CtxInfof(ctx, "BindAndValidate fail, %v", stdErr)
-		c.AbortWithMsg("request body invalid", http.StatusBadRequest)
+		dto.AbortWithErr(c, errs.ParamError, http.StatusBadRequest)
 		return
 	}
 
 	model, err := dao.NewModelDao().QueryByModelId(ctx, chatCreateReq.ModelId)
 	if err != nil {
 		hlog.CtxInfof(ctx, "QueryByModelId fail, %v", err)
-		c.AbortWithMsg("internal error", http.StatusInternalServerError)
+		dto.AbortWithErr(c, errs.ServerError, http.StatusInternalServerError)
 		return
 	}
 	if model == nil {
-		c.AbortWithMsg("model not found", http.StatusBadRequest)
+		dto.AbortWithErr(c, errs.ModelNotSupported, http.StatusNotFound)
 		return
 	}
 
 	cancelCtx, cancel := context.WithCancel(ctx)
 	defer cancel()
-	streamChan, err := chat.NewChatImpl(model.Platform, model.Name).
-		StreamChat(cancelCtx, parseStreamChatReq(&chatCreateReq))
+
+	chatImpl := chat.NewChatImpl(model.Platform, model.Name)
+	if chatImpl == nil {
+		hlog.CtxErrorf(ctx, "create chatImpl fail")
+		dto.AbortWithErr(c, errs.ServerError, http.StatusInternalServerError)
+		return
+	}
+	streamChan, err := chatImpl.StreamChat(cancelCtx, parseStreamChatReq(&chatCreateReq))
 	if err != nil {
 		hlog.CtxInfof(ctx, "StreamChat error, %v", err)
-		c.AbortWithMsg("internal error", http.StatusInternalServerError)
+		dto.AbortWithErr(c, errs.ServerError, http.StatusInternalServerError)
 		return
 	}
 

@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"webchat_be/biz/handler/service"
 	"webchat_be/biz/model/consts"
+	"webchat_be/biz/model/dto"
+	"webchat_be/biz/model/errs"
 	"webchat_be/biz/util/origin"
 )
 
@@ -20,20 +22,14 @@ func LoginStateVerify() []app.HandlerFunc {
 func LoginSession() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
 		session := sessions.DefaultMany(c, consts.SessionNameAccount)
-		originIP, ok := session.Get(consts.SessionKeyLoginIP).(string)
-		if ok && originIP != origin.GetIp(c) {
-			c.AbortWithMsg("user not login", http.StatusUnauthorized)
-			return
-		}
-		originDevice, ok := session.Get(consts.SessionKeyDevice).(string)
-		if ok && originDevice != origin.GetDevice(c) {
-			c.AbortWithMsg("user not login", http.StatusUnauthorized)
-			return
-		}
+		originIP, ok1 := session.Get(consts.SessionKeyLoginIP).(string)
+		originDevice, ok2 := session.Get(consts.SessionKeyDevice).(string)
+		accountId, ok3 := session.Get(consts.SessionKeyAccountId).(string)
 
-		accountId, ok := session.Get(consts.SessionKeyAccountId).(string)
-		if !ok {
-			c.AbortWithMsg("user not login", http.StatusUnauthorized)
+		if ok1 && originIP != origin.GetIp(c) &&
+			ok2 && originDevice != origin.GetDevice(c) ||
+			!ok3 {
+			dto.AbortWithErr(c, errs.Unauthorized, http.StatusUnauthorized)
 			return
 		}
 
@@ -43,7 +39,7 @@ func LoginSession() app.HandlerFunc {
 		ctx = context.WithValue(ctx, consts.SessionKeyAccountId, accountId)
 
 		if service.SessionIsExpired(ctx, accountId, session.ID()) {
-			c.AbortWithMsg("session is expired", http.StatusUnauthorized)
+			dto.AbortWithErr(c, errs.Unauthorized, http.StatusUnauthorized)
 			return
 		}
 

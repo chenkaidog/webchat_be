@@ -9,6 +9,8 @@ import (
 	"webchat_be/biz/dao"
 	"webchat_be/biz/db/redis"
 	"webchat_be/biz/model/consts"
+	"webchat_be/biz/model/dto"
+	"webchat_be/biz/model/errs"
 	"webchat_be/biz/util/origin"
 )
 
@@ -21,7 +23,7 @@ func ChatLimiter() app.HandlerFunc {
 		qpsKey := fmt.Sprintf("chat_limiter_qps_%s", sessId)
 		ok, err := redisClient.SetNX(ctx, qpsKey, true, time.Second).Result()
 		if err == nil && !ok {
-			c.AbortWithMsg("chat qps too high", http.StatusTooManyRequests)
+			dto.AbortWithErr(c, errs.TooManyRequest, http.StatusTooManyRequests)
 			return
 		}
 
@@ -29,7 +31,7 @@ func ChatLimiter() app.HandlerFunc {
 		respondingKey := fmt.Sprintf("chat_limiter_responding_%s", sessId)
 		ok, err = redisClient.SetNX(ctx, respondingKey, true, time.Second*5).Result()
 		if err == nil && !ok {
-			c.AbortWithMsg("chat qps too high", http.StatusTooManyRequests)
+			dto.AbortWithErr(c, errs.TooManyRequest, http.StatusTooManyRequests)
 			return
 		}
 
@@ -47,14 +49,14 @@ func LoginLimiter() app.HandlerFunc {
 		hourAgo, _ := loginRecordDao.QueryByIP(ctx, originIp, time.Now().Add(-time.Hour))
 		if len(hourAgo) > 20 {
 			SetRiskIP(ctx, originIp)
-			c.AbortWithMsg("login reach limit", http.StatusForbidden)
+			dto.AbortWithErr(c, errs.LoginReachLimit, http.StatusForbidden)
 			return
 		}
 
 		dayAgo, _ := loginRecordDao.QueryByIP(ctx, originIp, time.Now().Add(-24*time.Hour))
 		if len(dayAgo) > 40 {
 			SetRiskIP(ctx, originIp)
-			c.AbortWithMsg("login reach limit", http.StatusForbidden)
+			dto.AbortWithErr(c, errs.LoginReachLimit, http.StatusForbidden)
 			return
 		}
 
@@ -79,7 +81,7 @@ func SetRiskIP(ctx context.Context, ip string) {
 func IPIsAllowed() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
 		if ipIsBlocked(ctx, origin.GetIp(c)) {
-			c.AbortWithMsg("ip is blocked", http.StatusForbidden)
+			dto.AbortWithErr(c, errs.RequestBlocked, http.StatusForbidden)
 			return
 		}
 

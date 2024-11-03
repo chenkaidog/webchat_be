@@ -49,15 +49,14 @@ type ChatCreateReq struct {
 	UserId         string      `json:"user_id,omitempty"`
 }
 
-type ChatCreateResp struct {
-	// access error
+type ChatError struct {
 	ErrorCode int    `json:"error_code"`
 	ErrorMsg  string `json:"error_msg"`
+}
 
-	// bizError
-	ErrorDescription string `json:"error_description"`
-	Error            string `json:"error"`
-
+type ChatCreateResp struct {
+	ErrorDescription string        `json:"error_description"`
+	Error            string        `json:"error"`
 	ID               string        `json:"id"`
 	Object           string        `json:"object"`
 	Created          int           `json:"created"`
