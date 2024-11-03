@@ -25,20 +25,20 @@ func LoginSession() app.HandlerFunc {
 		originIP, ok1 := session.Get(consts.SessionKeyLoginIP).(string)
 		originDevice, ok2 := session.Get(consts.SessionKeyDevice).(string)
 		accountId, ok3 := session.Get(consts.SessionKeyAccountId).(string)
-
+		sessId, ok4 := session.Get(consts.SessionKeySessID).(string)
 		if ok1 && originIP != origin.GetIp(c) &&
 			ok2 && originDevice != origin.GetDevice(c) ||
-			!ok3 {
+			!ok3 || !ok4 {
 			dto.AbortWithErr(c, errs.Unauthorized, http.StatusUnauthorized)
 			return
 		}
 
-		ctx = context.WithValue(ctx, consts.SessionKeySessID, session.ID())
+		ctx = context.WithValue(ctx, consts.SessionKeySessID, sessId)
 		ctx = context.WithValue(ctx, consts.SessionKeyLoginIP, originIP)
 		ctx = context.WithValue(ctx, consts.SessionKeyDevice, originDevice)
 		ctx = context.WithValue(ctx, consts.SessionKeyAccountId, accountId)
 
-		if service.SessionIsExpired(ctx, accountId, session.ID()) {
+		if service.SessionIsExpired(ctx, accountId, sessId) {
 			dto.AbortWithErr(c, errs.Unauthorized, http.StatusUnauthorized)
 			return
 		}

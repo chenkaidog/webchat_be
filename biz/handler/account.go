@@ -36,11 +36,10 @@ func Login(ctx context.Context, c *app.RequestContext) {
 		dto.AbortWithErr(c, errs.ParamError, http.StatusBadRequest)
 		return
 	}
-	session := sessions.DefaultMany(c, consts.SessionNameAccount)
-	_ = session.Save() // save之后才能生成ID
 
+	sessId := random.RandStr(128)
 	bizResp, bizErr := service.AccountLogin(ctx, &service.LoginRequest{
-		SessID:   session.ID(),
+		SessID:   sessId,
 		Username: loginReq.Username,
 		Password: loginReq.Password,
 		IP:       origin.GetIp(c),
@@ -50,6 +49,9 @@ func Login(ctx context.Context, c *app.RequestContext) {
 		dto.FailResp(c, bizErr)
 		return
 	}
+
+	session := sessions.DefaultMany(c, consts.SessionNameAccount)
+	session.Set(consts.SessionKeySessID, sessId)
 	session.Set(consts.SessionKeyAccountId, bizResp.AccountId)
 	session.Set(consts.SessionKeyLoginIP, origin.GetIp(c))
 	session.Set(consts.SessionKeyDevice, origin.GetDevice(c))
