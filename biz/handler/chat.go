@@ -52,10 +52,14 @@ func StreamingChat(ctx context.Context, c *app.RequestContext) {
 		dto.AbortWithErr(c, errs.ServerError, http.StatusInternalServerError)
 		return
 	}
-	streamChan, err := chatImpl.StreamChat(cancelCtx, parseStreamChatReq(&chatCreateReq))
-	if err != nil {
-		hlog.CtxInfof(ctx, "StreamChat error, %v", err)
-		dto.AbortWithErr(c, errs.ServerError, http.StatusInternalServerError)
+	streamChan, bizErr := chatImpl.StreamChat(cancelCtx, parseStreamChatReq(&chatCreateReq))
+	if bizErr != nil {
+		if errs.ErrorEqual(bizErr, errs.ChatRateLimitReached) || errs.ErrorEqual(bizErr, errs.ExceedQuoteLimit) {
+			dto.AbortWithErr(c, bizErr, http.StatusTooManyRequests)
+		} else {
+			dto.AbortWithErr(c, bizErr, http.StatusInternalServerError)
+		}
+
 		return
 	}
 
