@@ -73,6 +73,7 @@ func (dao *AccountDao) QueryByAccountId(ctx context.Context, accountId string) (
 
 func (dao *AccountDao) UpdatePassword(ctx context.Context, accountId, password, salt string) error {
 	err := dao.conn.WithContext(ctx).
+		Model(&po.Account{}).
 		Where("account_id", accountId).
 		Updates(map[string]string{
 			"password": password,
