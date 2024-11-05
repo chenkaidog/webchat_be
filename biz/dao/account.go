@@ -75,7 +75,7 @@ func (dao *AccountDao) UpdatePassword(ctx context.Context, accountId, password, 
 	err := dao.conn.WithContext(ctx).
 		Model(&po.Account{}).
 		Where("account_id", accountId).
-		Updates(map[string]string{
+		Updates(map[string]interface{}{
 			"password": password,
 			"salt":     salt,
 		}).Error
