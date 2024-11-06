@@ -47,13 +47,8 @@ func (c *Chat) newStreamChatRequest(ctx context.Context, contents []*domain.Chat
 		messages = append(
 			messages,
 			Message{
-				Role: roleMapper[content.Role],
-				Content: []Content{
-					{
-						Type:    "text",
-						Content: content.Content,
-					},
-				},
+				Role:    roleMapper[content.Role],
+				Content: content.Content,
 			},
 		)
 	}
