@@ -58,7 +58,7 @@ func (c *Chat) newStreamChatRequest(ctx context.Context, contents []*domain.Chat
 			Model:               c.model,
 			Stream:              true,
 			Messages:            messages,
-			MaxCompletionTokens: 1000,
+			MaxCompletionTokens: 800,
 			User:                ctx_util.GetAccountId(ctx),
 			StreamOptions: StreamOptions{
 				IncludeUsage: true,
