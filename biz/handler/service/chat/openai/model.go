@@ -19,11 +19,12 @@ const (
 // https://platform.openai.com/docs/api-reference/chat/create
 
 type ChatCreateReq struct {
-	Model               string    `json:"model"`
-	Stream              bool      `json:"stream"`
-	MaxCompletionTokens int       `json:"max_completion_tokens"`
-	User                string    `json:"user"`
-	Messages            []Message `json:"messages"`
+	Model               string        `json:"model"`
+	Stream              bool          `json:"stream"`
+	MaxCompletionTokens int           `json:"max_completion_tokens"`
+	User                string        `json:"user"`
+	StreamOptions       StreamOptions `json:"stream_options"`
+	Messages            []Message     `json:"messages"`
 }
 
 type StreamOptions struct {

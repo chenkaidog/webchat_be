@@ -60,6 +60,9 @@ func (c *Chat) newStreamChatRequest(ctx context.Context, contents []*domain.Chat
 			Messages:            messages,
 			MaxCompletionTokens: 1000,
 			User:                ctx_util.GetAccountId(ctx),
+			StreamOptions: StreamOptions{
+				IncludeUsage: true,
+			},
 		},
 	)
 	if err != nil {
