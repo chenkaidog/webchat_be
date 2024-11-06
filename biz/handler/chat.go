@@ -98,6 +98,12 @@ func parseStreamChatReq(chatCreateReq *dto.ChatCreateReq) []*domain.ChatContent 
 		})
 	}
 
+	const maxLength = 11
+	if len(result) > maxLength {
+		start := len(result) - maxLength
+		return result[start:]
+	}
+
 	return result
 }
 

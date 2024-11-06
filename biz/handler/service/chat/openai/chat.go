@@ -11,6 +11,7 @@ import (
 	"webchat_be/biz/model/domain"
 	"webchat_be/biz/model/errs"
 	"webchat_be/biz/util/http_client"
+	"webchat_be/biz/util/logger/ctx_util"
 	"webchat_be/biz/util/sse_client"
 )
 
@@ -46,17 +47,24 @@ func (c *Chat) newStreamChatRequest(ctx context.Context, contents []*domain.Chat
 		messages = append(
 			messages,
 			Message{
-				Role:    roleMapper[content.Role],
-				Content: content.Content,
+				Role: roleMapper[content.Role],
+				Content: []Content{
+					{
+						Type:    "text",
+						Content: content.Content,
+					},
+				},
 			},
 		)
 	}
 
 	reqBody, err := json.Marshal(
 		&ChatCreateReq{
-			Model:    c.model,
-			Stream:   true,
-			Messages: messages,
+			Model:               c.model,
+			Stream:              true,
+			Messages:            messages,
+			MaxCompletionTokens: 1000,
+			User:                ctx_util.GetAccountId(ctx),
 		},
 	)
 	if err != nil {
@@ -78,10 +86,9 @@ func (c *Chat) newStreamChatRequest(ctx context.Context, contents []*domain.Chat
 
 func (c *Chat) handleRespStatus(ctx context.Context, httpResp *http.Response) errs.Error {
 	if statusCode := httpResp.StatusCode; statusCode != http.StatusOK {
+		respContent, _ := io.ReadAll(httpResp.Body)
+		hlog.CtxErrorf(ctx, "status_code: %d, error_msg: %s", httpResp.StatusCode, respContent)
 		if 400 <= statusCode && statusCode < 500 {
-			respContent, _ := io.ReadAll(httpResp.Body)
-			hlog.CtxErrorf(ctx, "status_code: %d, error_msg: %s", httpResp.StatusCode, respContent)
-
 			var errResp ErrorResp
 			_ = json.Unmarshal(respContent, &errResp)
 

@@ -16,14 +16,27 @@ const (
 	roleSystem    = "system"
 )
 
+// https://platform.openai.com/docs/api-reference/chat/create
+
 type ChatCreateReq struct {
-	Model    string    `json:"model"`
-	Messages []Message `json:"messages"`
-	Stream   bool      `json:"stream"`
+	Model               string    `json:"model"`
+	Stream              bool      `json:"stream"`
+	MaxCompletionTokens int       `json:"max_completion_tokens"`
+	User                string    `json:"user"`
+	Messages            []Message `json:"messages"`
+}
+
+type StreamOptions struct {
+	IncludeUsage bool `json:"include_usage"`
 }
 
 type Message struct {
-	Role    string `json:"role"`
+	Role    string    `json:"role"`
+	Content []Content `json:"content"`
+}
+
+type Content struct {
+	Type    string `json:"type"`
 	Content string `json:"content"`
 }
 

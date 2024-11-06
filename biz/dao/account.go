@@ -24,11 +24,25 @@ func (dao *AccountDao) Create(ctx context.Context, accountInfo *po.Account) erro
 	return dao.conn.WithContext(ctx).Create(accountInfo).Error
 }
 
-func (dao *AccountDao) QueryByUsernameForUpdate(ctx context.Context, username string) (*po.Account, error) {
+func (dao *AccountDao) QueryByUsername(ctx context.Context, username string) (*po.Account, error) {
 	var result *po.Account
 	if err := dao.conn.WithContext(ctx).
-		Clauses(clause.Locking{Strength: "UPDATE"}).
 		Where("username", username).
+		Take(&result).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		hlog.CtxErrorf(ctx, "query by username errs: %v", err)
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (dao *AccountDao) QueryByEmail(ctx context.Context, email string) (*po.Account, error) {
+	var result *po.Account
+	if err := dao.conn.WithContext(ctx).
+		Where("email", email).
 		Take(&result).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil

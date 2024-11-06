@@ -8,15 +8,15 @@ import (
 	"time"
 	"webchat_be/biz/dao"
 	"webchat_be/biz/db/redis"
-	"webchat_be/biz/model/consts"
 	"webchat_be/biz/model/dto"
 	"webchat_be/biz/model/errs"
+	"webchat_be/biz/util/logger/ctx_util"
 	"webchat_be/biz/util/origin"
 )
 
 func ChatLimiter() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
-		sessId := ctx.Value(consts.SessionKeySessID).(string)
+		sessId := ctx_util.GetSessionID(ctx)
 		redisClient := redis.GetRedisClient()
 
 		// 每个会话1s只能请求一次接口

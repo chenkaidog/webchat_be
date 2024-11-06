@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/gorm"
+	"regexp"
 	"webchat_be/biz/dao"
 	"webchat_be/biz/db/mysql"
 	"webchat_be/biz/model/domain"
@@ -29,20 +30,26 @@ type LoginResponse struct {
 }
 
 func AccountLogin(ctx context.Context, req *LoginRequest) (resp LoginResponse, loginResult errs.Error) {
-	txErr := mysql.GetDbConn().Transaction(func(tx *gorm.DB) error {
-		accountInfo, err := dao.NewAccountDao(tx).QueryByUsernameForUpdate(ctx, req.Username)
-		if err != nil {
-			return err
-		}
-		if accountInfo == nil {
-			hlog.CtxInfof(ctx, "username not exists: %s", req.Username)
-			loginResult = errs.AccountNotExist
-			_ = dao.NewLoginRecordDao(tx).Create(ctx, &po.LoginRecord{
+	accountId, bizErr := getAccountId(ctx, req.Username)
+	if bizErr != nil {
+		if errs.ErrorEqual(bizErr, errs.AccountNotExist) {
+			_ = dao.NewLoginRecordDao().Create(ctx, &po.LoginRecord{
 				AccountID: "",
 				Status:    domain.LoginRecordFailed,
 				IP:        req.IP,
 				Device:    req.Device,
 			})
+		}
+		return LoginResponse{}, bizErr
+	}
+	txErr := mysql.GetDbConn().Transaction(func(tx *gorm.DB) error {
+		accountInfo, err := dao.NewAccountDao(tx).QueryByAccountIdForUpdate(ctx, accountId)
+		if err != nil {
+			return err
+		}
+		if accountInfo == nil {
+			hlog.CtxInfof(ctx, "unexpected err, account_id not exist: %s", req.Username)
+			loginResult = errs.ServerError
 			return nil
 		}
 		resp.AccountId = accountInfo.AccountID
@@ -77,6 +84,31 @@ func AccountLogin(ctx context.Context, req *LoginRequest) (resp LoginResponse, l
 	}
 
 	return
+}
+
+// 通过判断用户输入的是用户名还是邮箱，然后获取account_id进行登录
+func getAccountId(ctx context.Context, username string) (string, errs.Error) {
+	const emailPattern = `^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$`
+	matched, err := regexp.MatchString(emailPattern, username)
+	if err != nil {
+		hlog.CtxErrorf(ctx, "regexp err: %v", err)
+		return "", errs.ServerError
+	}
+
+	var account *po.Account
+	if matched {
+		account, err = dao.NewAccountDao().QueryByEmail(ctx, username)
+	} else {
+		account, err = dao.NewAccountDao().QueryByUsername(ctx, username)
+	}
+	if err != nil {
+		hlog.CtxErrorf(ctx, "query account err: %v", err)
+		return "", errs.ServerError
+	}
+	if account == nil {
+		return "", errs.AccountNotExist
+	}
+	return account.AccountID, nil
 }
 
 type PasswordUpdateRequest struct {

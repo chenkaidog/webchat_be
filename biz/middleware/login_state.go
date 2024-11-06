@@ -22,17 +22,19 @@ func LoginStateVerify() []app.HandlerFunc {
 func LoginSession() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
 		session := sessions.DefaultMany(c, consts.SessionNameAccount)
-		originIP, ok1 := session.Get(consts.SessionKeyLoginIP).(string)
-		originDevice, ok2 := session.Get(consts.SessionKeyDevice).(string)
-		accountId, ok3 := session.Get(consts.SessionKeyAccountId).(string)
-		sessId, ok4 := session.Get(consts.SessionKeySessID).(string)
-		if ok1 && originIP != origin.GetIp(c) &&
-			ok2 && originDevice != origin.GetDevice(c) ||
-			!ok3 || !ok4 {
+		originIP, _ := session.Get(consts.SessionKeyLoginIP).(string)
+		originDevice, _ := session.Get(consts.SessionKeyDevice).(string)
+		email, _ := session.Get(consts.SessionKeyEmail).(string)
+		accountId, ok1 := session.Get(consts.SessionKeyAccountId).(string)
+		sessId, ok2 := session.Get(consts.SessionKeySessID).(string)
+		if originIP != origin.GetIp(c) &&
+			originDevice != origin.GetDevice(c) ||
+			!ok1 || !ok2 {
 			dto.AbortWithErr(c, errs.Unauthorized, http.StatusUnauthorized)
 			return
 		}
 
+		ctx = context.WithValue(ctx, consts.SessionKeyEmail, email)
 		ctx = context.WithValue(ctx, consts.SessionKeySessID, sessId)
 		ctx = context.WithValue(ctx, consts.SessionKeyLoginIP, originIP)
 		ctx = context.WithValue(ctx, consts.SessionKeyDevice, originDevice)

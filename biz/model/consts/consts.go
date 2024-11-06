@@ -9,6 +9,7 @@ const (
 	SessionNameAccount        = "sess_account"
 	SessionNameRegisterVerify = "sess_register_verify"
 	SessionNameResetVerify    = "sess_reset_verify"
+	SessionKeyEmail           = "webchat_sess_key:email"
 	SessionKeySessID          = "webchat_sess_key:sess_id"
 	SessionKeyLoginIP         = "webchat_sess_key:login_ip"
 	SessionKeyDevice          = "webchat_sess_key:device"

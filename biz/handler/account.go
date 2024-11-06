@@ -12,6 +12,7 @@ import (
 	"webchat_be/biz/model/dto"
 	"webchat_be/biz/model/errs"
 	"webchat_be/biz/util/encode"
+	"webchat_be/biz/util/logger/ctx_util"
 	"webchat_be/biz/util/origin"
 	"webchat_be/biz/util/random"
 )
@@ -52,6 +53,7 @@ func Login(ctx context.Context, c *app.RequestContext) {
 
 	session := sessions.DefaultMany(c, consts.SessionNameAccount)
 	session.Set(consts.SessionKeySessID, sessId)
+	session.Set(consts.SessionKeyEmail, bizResp.Email)
 	session.Set(consts.SessionKeyAccountId, bizResp.AccountId)
 	session.Set(consts.SessionKeyLoginIP, origin.GetIp(c))
 	session.Set(consts.SessionKeyDevice, origin.GetDevice(c))
@@ -90,7 +92,7 @@ func Login(ctx context.Context, c *app.RequestContext) {
 //	@Failure		400,500			{object}	dto.CommonResp
 //	@Router			/api/v1/account/info [GET]
 func GetAccountInfo(ctx context.Context, c *app.RequestContext) {
-	accountId := ctx.Value(consts.SessionKeyAccountId).(string)
+	accountId := ctx_util.GetAccountId(ctx)
 	accountInfo, err := dao.NewAccountDao().QueryByAccountId(ctx, accountId)
 	if err != nil {
 		dto.FailResp(c, errs.ServerError)
@@ -140,8 +142,9 @@ func Logout(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	accountId := ctx.Value(consts.SessionKeyAccountId).(string)
-	_ = service.RemoveSession(ctx, accountId, session.ID())
+	accountId := ctx_util.GetAccountId(ctx)
+	sessId := ctx_util.GetSessionID(ctx)
+	_ = service.RemoveSession(ctx, accountId, sessId)
 
 	dto.SuccessResp(c, &dto.LogoutResp{})
 }
@@ -167,7 +170,7 @@ func UpdatePassword(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	accountId := ctx.Value(consts.SessionKeyAccountId).(string)
+	accountId := ctx_util.GetAccountId(ctx)
 
 	if bizErr := service.AccountUpdatePassword(ctx, &service.PasswordUpdateRequest{
 		AccountId:   accountId,

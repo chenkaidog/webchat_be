@@ -7,7 +7,7 @@ WORKDIR /app
 # 复制项目文件到工作目录
 COPY output/ .
 
-ENV log_level=info\
+ENV log_level=debug\
     log_output_filename='web_chat'
 
 # 使主程序可执行

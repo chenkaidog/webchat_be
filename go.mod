@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/bytedance/gopkg v0.1.1
 	github.com/cloudwego/hertz v0.9.3
+	github.com/go-playground/assert/v2 v2.2.0
 	github.com/hertz-contrib/binding v0.1.0
 	github.com/hertz-contrib/cors v0.1.0
 	github.com/hertz-contrib/logger/accesslog v0.0.0-20240623133421-6fb592ed8d10
